@@ -179,7 +179,10 @@ i.sw { display: inline-block; width: 18px; height: 18px; border-radius: 5px; fle
 
 #fs:empty { display: none; }
 header #fs { display: block; flex: 1 1 0; min-width: 0; margin-left: 12px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-header.hasfs h1 { margin-right: 0; }
+header.hasfs:has(#fs:not(:empty):not(.fsgone)) h1 { margin-right: 0; }
+#fs.fsgone { display: none !important; }
+#fsm { font-size: 13px; color: var(--mu); }
+header #fs.hint { white-space: normal; line-height: 1.25; }
 #fs a { color: var(--ac); cursor: pointer; text-decoration: underline; }
 
 
@@ -470,13 +473,14 @@ select:not([multiple]) {
 <aside id="drawer" hidden aria-label="Menu and projects">
   <div class="dhead"><b>Menu</b><button id="dx" aria-label="Close menu">✕</button></div>
   <div class="dsec dtheme"><span>Dark mode</span><button id="bth" class="sw" role="switch" aria-checked="false" aria-label="Dark mode"><i></i></button></div>
+  <div class="dsec" id="fsm" hidden></div>
   <div class="dsec" id="projsec"></div>
   <div class="dsec dmenu">
     <h3>Options</h3>
     <button id="bt2">Edit Data Table</button>
     <button id="bd">View Data (JSON)</button>
     <button id="bro" title="Download a read-only copy of what is showing now">Export read-only file</button>
-    <button id="bsh" title="Send a copy of this graph to Files, Dropbox, Google Drive, OneDrive, Mail and so on">Share / Save to…</button>
+    <button id="bsh" title="Save a copy of this graph as a .json file">Save to Files</button>
     <button id="bof" hidden title="Choose a graph file from Files, Dropbox, Google Drive or OneDrive">Open from Files</button>
     <input type="file" id="bff" accept=".json,application/json,text/plain" hidden>
     <button id="bo">Open File</button>
@@ -684,7 +688,7 @@ select:not([multiple]) {
     <tr><td><b>Table</b></td><td>Spreadsheet editor (also under Menu as Edit Data Table).</td></tr>
     <tr><td><b>Graph</b></td><td>Layout · Reset Layout · Edge labels · Icons · Parameters.</td></tr>
     <tr><td><b>Curved arrows</b></td><td>Undo (back) and Redo (forward) your changes.</td></tr>
-    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · View Data (JSON) · Export read-only file · Share / Save to… · Open from Files · Open File · Save File · Save as File · Colours.</td></tr>
+    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · View Data (JSON) · Export read-only file · Save to Files · Open from Files · Open File · Save File · Save as File · Colours.</td></tr>
     <tr><td><b>?</b></td><td>This guide.</td></tr>
   </table>
   <p>Only one of Search, Filter and Graph is open at a time. Menu slides in from the left.</p>
@@ -701,7 +705,8 @@ select:not([multiple]) {
     <li><b>Undo</b> and <b>Redo</b> (the two curved arrows in the top bar, or <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Z</kbd> and <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>) step through your last 10 changes. A small message says which change was undone or redone, and hovering a button shows what it will do. Redo is forgotten after 5 minutes without an undo or redo. The history is cleared when you reload the page.</li>
     <li><b>Export read-only file</b> downloads a copy of what you can see right now: nodes and links hidden by Filter, Select or Blank slate are left out. Anyone can open it in a browser to look around, search, read the details and drag nodes around to tidy the view (moves are not saved, and <b>Reset layout</b> puts them back), but nobody can change your data. It is one self-contained file that also works offline, because the drawing library is bundled inside it (if that could not be fetched when you exported, the message says so and the file needs internet instead).</li>
     <li><b>Open File</b>, <b>Save File</b>, <b>Save as File</b>: link a <code>.json</code> file (Edge or Chrome on a computer only).</li>
-    <li><b>Share / Save to…</b> sends a copy of the graph to Files, Dropbox, Google Drive, OneDrive or Mail on a phone or tablet; on a computer it downloads the file. <b>Open from Files</b> loads a graph file from those places and replaces the graph in this browser.</li>
+    <li>In a browser that cannot link files (Safari, Firefox), the top bar says autosave is not available and reminds you to use <b>Save to Files</b> regularly. On Edge or Chrome, the top bar says <b>Set up autosave by linking a folder or file</b> until one is linked. Click it to open the Menu. The same message is kept at the top of the Menu. In the top bar it goes away after 2 minutes, or once a save is done.</li>
+    <li><b>Save to Files</b> saves a copy of the graph as a <code>.json</code> file, the reverse of <b>Open from Files</b> (on an iPhone, choose where to keep it, such as Files). <b>Open from Files</b> loads a graph file from those places and replaces the graph in this browser.</li>
   </ul>
   <p>On a phone the panel shows at the bottom. <b>Expand</b> makes it full screen.</p>
   <p class="back"><a data-go="top">↑ Back to contents</a></p>
@@ -3524,7 +3529,28 @@ const hasFS = () => 'showOpenFilePicker' in window && 'showSaveFilePicker' in wi
 const isGraph = j => j && Array.isArray(j.nodes) && Array.isArray(j.edges);
 const FILE_TYPES = [{ description: 'Graph JSON', accept: { 'application/json': ['.json'] } }];
 
+let fsHintOn = false, fsGone = false;
+const fsPaint = () => { $('fs').classList.toggle('fsgone', fsGone); const t = $('fs').innerHTML.trim(); $('fsm').innerHTML = t; $('fsm').hidden = !t; if (typeof syncTb === 'function') syncTb(); };
+setTimeout(() => { fsGone = true; fsPaint(); }, 120000);
+new MutationObserver(() => { const t = $('fs').innerHTML.trim(); if ($('fsm').innerHTML !== t) { $('fsm').innerHTML = t; $('fsm').hidden = !t; } $('fs').classList.toggle('fsgone', fsGone); }).observe($('fs'), { childList: true, subtree: true, characterData: true });
+function fsHint() {
+  if (!hasFS()) {
+    $('fs').innerHTML = 'Autosave is not available in this browser. <a data-fs="dl" title="Download a copy of the graph now">Save to Files</a> regularly.';
+    $('fs').classList.add('hint'); syncTb(); return;
+  }
+  if (fileHandle || pendingHandle || dirHandle || dirPending || $('fs').textContent.trim()) return;
+  $('fs').innerHTML = '<a data-fs="menu" title="Open the Menu to save to a file or link a folder">Set up autosave by linking a folder or file</a>';
+  fsHintOn = true; $('fs').classList.add('hint'); syncTb();
+}
+function folderFs() {
+  if (!dirHandle || fileHandle) return;
+  const t = projects.length ? 'Folder linked. Choose a project in the Menu to begin autosaving.' : 'Folder linked. Make a project file to begin autosaving.';
+  $('fs').innerHTML = '<a data-fs="menu" title="Open the Menu to choose or make a project">' + esc(t) + '</a>';
+  fsHintOn = true; $('fs').classList.add('hint'); syncTb();
+}
 function setFs(msg, reconnectLink) {
+  fsHintOn = false; $('fs').classList.remove('hint');
+  if (reconnectLink || /could not|went wrong|not granted|blocked/i.test(msg)) fsGone = false;
   $('fs').innerHTML = esc(msg) + (reconnectLink ? ' <a data-fs="1">Reconnect</a>' : '');
   syncTb();
 }
@@ -3572,6 +3598,7 @@ async function doWrite() {
     await w.write(JSON.stringify(D, null, 1));
     await w.close();
     setFs(projPre() + (activeProj ? 'Changes saved to ' : 'Saved to ') + fileHandle.name + ' at ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '.');
+    fsGone = true; fsPaint();
   } catch (e) {
     setFs(projPre() + 'Could not save to ' + fileHandle.name + '. Tap Save File to try again.');
   }
@@ -3638,23 +3665,8 @@ async function initFile() {
 
 // phone-friendly save and open: share sheet out, file picker in
 const shareName = () => (activeProj ? baseName(activeProj) : 'graph') + '.json';
-// some phones refuse to share a .json type, so try that first, then plain text with the same .json name
-const shareFile = () => {
-  const txt = JSON.stringify(D, null, 1);
-  for (const t of ['application/json', 'text/plain']) {
-    try { const f = new File([txt], shareName(), { type: t }); if (navigator.canShare && navigator.canShare({ files: [f] })) return f; } catch (e) {}
-  }
-  return null;
-};
 $('bsh').hidden = false;
-$('bsh').onclick = async () => {
-  const f = shareFile();
-  if (f) {
-    try { await navigator.share({ files: [f], title: shareName() }); toast('Shared ' + shareName()); closeDrawer(); return; }
-    catch (e) { if (e && e.name === 'AbortError') return; }
-  }
-  dl(shareName(), JSON.stringify(D, null, 1), 'application/json'); toast('Downloaded ' + shareName() + ' (sharing is not available here)'); closeDrawer();
-};
+$('bsh').onclick = () => { dl(shareName(), JSON.stringify(D, null, 1), 'application/json'); toast('Saved ' + shareName() + ' (check your Downloads or the place you chose)'); fsGone = true; fsPaint(); closeDrawer(); };
 if (!hasFS()) $('bof').hidden = false;
 $('bof').onclick = () => { $('bff').value = ''; $('bff').click(); };
 $('bff').onchange = async () => {
@@ -3669,12 +3681,21 @@ if (hasFS()) {
   $('bo').onclick = openFile;
   $('bs').onclick = saveClick;
   $('ba').onclick = saveAs;
-  $('fs').addEventListener('click', e => { const a = e.target.closest('[data-fs]'); if (a) { if (a.dataset.fs === 'dir') reconnectDir(); else reconnect(); } });
 } else {
 
   ['bo', 'bs', 'ba'].forEach(id => { $(id).hidden = true; });
 }
 
+
+const fsClick = e => {
+  const a = e.target.closest('[data-fs]'); if (!a) return;
+  const inMenu = !!e.target.closest('#fsm'), k = a.dataset.fs;
+  if (k === 'dir') reconnectDir();
+  else if (k === 'menu') { if (inMenu) $('projsec').scrollIntoView({ block: 'start' }); else openDrawer(); }
+  else if (k === 'dl') $('bsh').click();
+  else if (hasFS()) reconnect();
+};
+$('fs').addEventListener('click', fsClick); $('fsm').addEventListener('click', fsClick);
 
 // ---------- drawer and folder projects ----------
 const hasDir = () => 'showDirectoryPicker' in window;
@@ -3718,10 +3739,11 @@ async function listProjects() {
 let newOpen = false, fldOpen = false;
 // What to show when no folder is linked: pick one that already exists, or make a new one.
 function folderChoice() {
-  if (fldOpen) return '<p class="mu">Name the new folder. You will then choose where on your computer to put it, and it is used for your projects.</p><input id="fname" placeholder="New folder name" autocomplete="off" aria-label="New folder name"><div class="pjnew"><button class="p" data-pj="mkfolder">Choose location and create</button><button data-pj="fcancel">Cancel</button></div>';
+  if (fldOpen) return '<p class="mu">A folder window opens on your Desktop. Click <b>New Folder</b> (bottom left on a Mac), type a name, then click <b>Open</b> with that new folder selected. Your computer may not let you pick Desktop, Documents or Downloads themselves, so make the new folder inside one of them.</p><div class="pjnew"><button class="p" data-pj="connect">Open folder window</button><button data-pj="fcancel">Cancel</button></div>';
   return '<div class="pjnew"><button class="p" data-pj="connect">Select existing folder</button><button data-pj="fnew">Create new folder</button></div>';
 }
 function renderProjects() {
+  if (fsHintOn && dirHandle && !fileHandle) folderFs();
   const el = $('projsec'); if (!el) return;
   let h = '<h3>Projects</h3>';
   if (!hasDir()) {
@@ -3769,25 +3791,13 @@ async function openProject(name, force) {
 
 async function connectFolder() {
   try {
-    const h = await window.showDirectoryPicker({ id: 'mgraph', mode: 'readwrite' });
-    dirHandle = h; dirPending = null; projMsg = '';
-    await idbPutKey('dir', h);
-    await listProjects();
-    renderProjects();
-  } catch (e) { if (!(e && e.name === 'AbortError')) { projMsg = e && e.name === 'SecurityError' ? 'Folder access is blocked here. Open the file in Edge or Chrome on a computer.' : 'Could not open that folder: ' + (e && e.message ? e.message : e); renderProjects(); } }
-}
-async function makeFolder() {
-  const raw = ($('fname') ? $('fname').value : '').trim();
-  const clean = raw.replace(/[\\/:*?"<>|\u0000-\u001f]+/g, '').replace(/^\.+/, '').trim().slice(0, 60);
-  if (!clean) { projMsg = 'Type a name for the new folder first.'; renderProjects(); const i = $('fname'); if (i) i.focus(); return; }
-  try {
-    const parent = await window.showDirectoryPicker({ id: 'mgraph-parent', mode: 'readwrite' });
-    const h = await parent.getDirectoryHandle(clean, { create: true });
+    const h = await window.showDirectoryPicker({ id: 'mgraph', mode: 'readwrite', startIn: 'desktop' });
     dirHandle = h; dirPending = null; projMsg = ''; fldOpen = false;
     await idbPutKey('dir', h);
     await listProjects();
-    renderProjects(); toast('Using folder: ' + clean);
-  } catch (e) { if (!(e && e.name === 'AbortError')) { projMsg = 'Could not create the folder: ' + (e && e.message ? e.message : e); renderProjects(); } }
+    folderFs();
+    renderProjects();
+  } catch (e) { if (!(e && e.name === 'AbortError')) { projMsg = e && e.name === 'SecurityError' ? 'Folder access is blocked here. Open the file in Edge or Chrome on a computer.' : 'Could not open that folder: ' + (e && e.message ? e.message : e); renderProjects(); } }
 }
 async function reconnectDir() {
   const h = dirPending; if (!h) return;
@@ -3797,7 +3807,7 @@ async function reconnectDir() {
     await listProjects();
     let last = ''; try { last = localStorage.getItem(PROJ_KEY) || ''; } catch (e) {}
     if (last && projects.some(x => x.name === last)) await openProject(last, true);
-    else setFs('Folder: ' + h.name + '. Choose a project in the Menu.');
+    else folderFs();
     renderProjects();
   } catch (e) { projMsg = 'Could not read the folder. Choose it again.'; renderProjects(); }
 }
@@ -3820,10 +3830,9 @@ async function newProject(copy) {
 $('projsec').addEventListener('click', e => {
   const b = e.target.closest('[data-pj]'); if (!b) return;
   const a = b.dataset.pj;
-  if (a === 'connect') { fldOpen = false; connectFolder(); }
-  else if (a === 'fnew') { fldOpen = true; projMsg = ''; renderProjects(); const i = $('fname'); if (i) i.focus(); }
+  if (a === 'connect') { connectFolder(); }
+  else if (a === 'fnew') { fldOpen = true; projMsg = ''; renderProjects(); }
   else if (a === 'fcancel') { fldOpen = false; projMsg = ''; renderProjects(); }
-  else if (a === 'mkfolder') makeFolder();
   else if (a === 'reconnect') reconnectDir();
   else if (a === 'refresh') { projMsg = ''; listProjects().then(renderProjects).catch(() => { projMsg = 'Could not read the folder.'; renderProjects(); }); }
   else if (a === 'open') openProject(b.dataset.name);
@@ -3832,7 +3841,7 @@ $('projsec').addEventListener('click', e => {
   else if (a === 'blank') newProject(false);
   else if (a === 'copy') newProject(true);
 });
-$('projsec').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'pname') { e.preventDefault(); newProject(false); } if (e.key === 'Enter' && e.target.id === 'fname') { e.preventDefault(); makeFolder(); } });
+$('projsec').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'pname') { e.preventDefault(); newProject(false); } });
 
 async function initProjects() {
   renderProjects();
@@ -3844,7 +3853,7 @@ async function initProjects() {
       dirHandle = h; await listProjects();
       let last = ''; try { last = localStorage.getItem(PROJ_KEY) || ''; } catch (e) {}
       if (last && projects.some(x => x.name === last)) await openProject(last, true);
-      else setFs('Folder: ' + h.name + '. Choose a project in the Menu.');
+      else folderFs();
     } else {
       dirPending = h; pendingHandle = null;
       $('fs').innerHTML = esc('Project folder: ' + h.name + '.') + ' <a data-fs="dir">Reconnect</a>'; syncTb();
@@ -3873,7 +3882,7 @@ function placeFs() {
 fsMq.addEventListener('change', placeFs);
 
 function syncTb() {
-  $('tb').hidden = $('sbar').hidden && $('chips').hidden && $('selp').hidden && $('posbar').hidden && (fsInHeader || !$('fs').textContent);
+  $('tb').hidden = $('sbar').hidden && $('chips').hidden && $('selp').hidden && $('posbar').hidden && (fsInHeader || !$('fs').textContent || fsGone);
   markOpen();
 }
 
@@ -3986,7 +3995,7 @@ placeFs();
 draw();
 home();
 posBarUpdate();
-if (hasFS()) initFile().then(initProjects);
+if (hasFS()) initFile().then(initProjects).then(fsHint); else fsHint();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { cy.resize(); lay(); });
 </script>
 </body>
