@@ -168,7 +168,7 @@ i.sw { display: inline-block; width: 18px; height: 18px; border-radius: 5px; fle
   border-bottom: 1px solid var(--bd);
 }
 #cnt:empty { display: none; }
-#exbar { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); z-index: 6; background: var(--sf); color: var(--tx); border: 1px solid var(--bd); border-radius: 99px; padding: 5px 14px; font-size: 13px; white-space: nowrap; box-shadow: 0 1px 6px rgba(0,0,0,.15); }
+#exbar { position: absolute; top: 6px; left: 8px; z-index: 6; background: var(--sf); color: var(--tx); border: 1px solid var(--bd); border-radius: 99px; padding: 5px 14px; font-size: 13px; white-space: nowrap; box-shadow: 0 1px 6px rgba(0,0,0,.15); }
 #exbar a { color: var(--ac); font-weight: 600; }
 .welcome { border: 1px solid var(--bd); border-radius: 12px; padding: 16px 18px; background: var(--sf); color: var(--tx); box-shadow: 0 2px 14px rgba(0,0,0,.15); max-width: 320px; }
 #wbox { position: absolute; inset: 0; z-index: 6; display: flex; align-items: center; justify-content: center; padding: 16px; pointer-events: none; }
@@ -412,8 +412,9 @@ header button#bh:hover { color: var(--ac); }
 header #hb { flex: 0 0 auto; }
 #scrim { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 290; }
 /* version tag pinned to the bottom left of the Menu */
-.dver { position: sticky; bottom: 0; padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px)); font-size: 12px; color: var(--mu); background: var(--sf); border-top: 1px solid var(--bd); }
-#drawer { position: fixed; top: 0; bottom: 0; left: 0; width: min(330px, 90vw); background: var(--sf); color: var(--tx); border-right: 1px solid var(--bd); z-index: 300; overflow: auto; box-shadow: 4px 0 24px rgba(0,0,0,.25); padding-top: env(safe-area-inset-top, 0px); }
+.drawer > *, #drawer > * { flex-shrink: 0; }
+.dver { margin-top: auto; position: sticky; bottom: 0; padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px)); font-size: 12px; color: var(--mu); background: var(--sf); border-top: 1px solid var(--bd); }
+#drawer { position: fixed; top: 0; bottom: 0; left: 0; width: min(330px, 90vw); background: var(--sf); color: var(--tx); border-right: 1px solid var(--bd); z-index: 300; overflow: auto; display: flex; flex-direction: column; box-shadow: 4px 0 24px rgba(0,0,0,.25); padding-top: env(safe-area-inset-top, 0px); }
 #scrim[hidden], #drawer[hidden] { display: none; }
 .dhead { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--bd); font-size: 16px; }
 .dsec { padding: 10px 12px; border-bottom: 1px solid var(--bd); }
@@ -490,7 +491,7 @@ select:not([multiple]) {
   <div class="dsec" id="fsm" hidden></div>
   <div class="dsec" id="projsec"></div>
   <div class="dsec dmenu">
-    <h3>Options</h3>
+    <h3>Data</h3>
     <button id="bt2">Edit Data Table</button>
     <button id="bd">View Data (JSON)</button>
     <button id="bro" title="Download a read-only copy of what is showing now">Export read-only file</button>
@@ -500,10 +501,14 @@ select:not([multiple]) {
     <button id="bo">Open File</button>
     <button id="bs">Save File</button>
     <button id="ba" hidden>Save as File</button>
-    <button id="bcc">Colours</button>
     <button id="bex" title="Load the pizza example to see how it works">Example graph</button>
   </div>
-  <div class="dver">Version 2.0.0</div>
+  <div class="dsec dmenu">
+    <h3>Options</h3>
+    <button id="bcc">Colours</button>
+    <button id="bpg" title="Download this tool as one HTML file you can keep and open from your own computer">Download program file</button>
+  </div>
+  <div class="dver">Version 2.1.0</div>
 </aside>
 
 <div id="hv" hidden role="dialog" aria-label="Help">
@@ -704,7 +709,7 @@ select:not([multiple]) {
     <tr><td><b>Table</b></td><td>Spreadsheet editor (also under Menu as Edit Data Table).</td></tr>
     <tr><td><b>Graph</b></td><td>Layout · Reset Layout · Edge labels · Icons · Parameters.</td></tr>
     <tr><td><b>Curved arrows</b></td><td>Undo (back) and Redo (forward) your changes.</td></tr>
-    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · View Data (JSON) · Export read-only file · Download File · Open from Files · Open File · Save File · Colours.</td></tr>
+    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · Data (Edit Data Table, View Data, Export read-only file, Download File, Open from Files, Open File, Save File, Example graph) · Options (Colours, Download program file).</td></tr>
     <tr><td><b>?</b></td><td>This guide.</td></tr>
   </table>
   <p>Only one of Search, Filter and Graph is open at a time. Menu slides in from the left.</p>
@@ -1021,6 +1026,20 @@ function uiAsk(msg, okOnly) {
   });
 }
 const uiConfirm = m => uiAsk(m, false), uiAlert = m => uiAsk(m, true);
+// two-button choice: resolves 'a' (first button), 'b' (second button) or null (Escape)
+function uiChoice(msg, labelA, labelB) {
+  return new Promise(res => {
+    const w = document.createElement('div'); w.className = 'dlg';
+    w.innerHTML = '<div class="dlgb" role="alertdialog" aria-modal="true"><p></p><div class="row"><button class="dno"></button><button class="p dok"></button></div></div>';
+    w.querySelector('p').textContent = msg;
+    w.querySelector('.dok').textContent = labelA; w.querySelector('.dno').textContent = labelB;
+    const done = v => { w.remove(); res(v); };
+    w.querySelector('.dok').onclick = () => done('a');
+    w.querySelector('.dno').onclick = () => done('b');
+    w.addEventListener('keydown', e => { if (e.key === 'Escape') done(null); });
+    document.body.appendChild(w); w.querySelector('.dok').focus();
+  });
+}
 let blankSet = null;
 let focusSet = null;
 let q = '';
@@ -1109,7 +1128,7 @@ function style() {
     { selector: 'node', style: {
         label: n => lblWrap(n.data('label')).s, 'background-color': 'data(color)', 'font-size': 11, color: css('--tx'),
         'text-valign': 'bottom', 'text-margin-y': 8,
-        'text-wrap': 'wrap', 'text-max-width': n => lblWrap(n.data('label')).w,
+        'text-wrap': 'wrap', 'line-height': 1.3, 'text-max-width': n => lblWrap(n.data('label')).w,
         'text-outline-color': css('--bg'), 'text-outline-width': 3, 'text-outline-opacity': .9,
         'min-zoomed-font-size': 7,
         width: 26, height: 26, 'border-width': 2, 'border-color': css('--sf'), 'z-index-compare': 'manual', 'z-index': 20 } },
@@ -1121,7 +1140,7 @@ function style() {
     { selector: 'edge', style: {
         width: 1.5, 'line-color': css('--mu'), 'target-arrow-color': css('--mu'), 'source-arrow-color': css('--mu'), 'target-arrow-shape': 'triangle', 'source-arrow-shape': 'none',
         'curve-style': 'bezier', 'control-point-step-size': 45, 'z-index-compare': 'manual', 'z-index': 0,
-        'font-size': 9, color: css('--mu'), 'text-wrap': 'wrap', 'text-max-width': e => lblWrap(e.data('label')).w,
+        'font-size': 9, color: css('--mu'), 'text-wrap': 'wrap', 'line-height': 1.35, 'text-max-width': e => lblWrap(e.data('label')).w,
         'text-background-color': css('--bg'), 'text-background-opacity': .85, 'text-background-padding': 2 } },
     { selector: 'edge[arrow = "both"]', style: { 'source-arrow-shape': 'triangle' } },
     { selector: 'edge[arrow = "none"]', style: { 'target-arrow-shape': 'none' } },
@@ -2412,32 +2431,57 @@ function placeNodeLabels() {
   const I = [];
   nodes.forEach(n => {
     const t = String(n.data('label')), p = n.position();
-    I.push({ n, id: n.id(), x: p.x, y: p.y, rx: n.outerWidth() / 2, ry: n.outerHeight() / 2, w: lblWrap(t).est + 12, h: lblWrap(t).n * 13 + 8, m: baseM.get(n.id()) != null ? baseM.get(n.id()) : 8 });
+    I.push({ n, id: n.id(), x: p.x, y: p.y, rx: n.outerWidth() / 2, ry: n.outerHeight() / 2, w: lblWrap(t).est + 12, h: lblWrap(t).n * 14.5 + 8, m: baseM.get(n.id()) != null ? baseM.get(n.id()) : 8 });
   });
   const boxes = cy.nodes().filter(n => !n.hasClass('hid')).map(n => { const p = n.position(); return { id: n.id(), x: p.x, y: p.y, w: n.outerWidth(), h: n.outerHeight() }; });
   const segs = [];
   cy.edges().forEach(e => { if (e.hasClass('hid') || e.source() === e.target()) return; segs.push({ a: e.source().position(), b: e.target().position() }); });
-  const spots = i => ({
-    b: { x: i.x, y: i.y + i.ry + i.m + i.h / 2 }, t: { x: i.x, y: i.y - i.ry - 4 - i.h / 2 },
-    r: { x: i.x + i.rx + 4 + i.w / 2, y: i.y }, l: { x: i.x - i.rx - 4 - i.w / 2, y: i.y } });
+  // arrowheads: a box around each arrow tip so no name is ever drawn over one
+  const heads = [];
+  cy.edges().forEach(e => {
+    if (e.hasClass('hid') || e.source() === e.target()) return;
+    const ar = e.data('arrow') || 'to';
+    if (ar === 'none') return;
+    const rs = e._private.rscratch, pts = rs && rs.allpts, sp0 = e.source().position(), tp0 = e.target().position();
+    const addHead = (end, from) => {   // end: where the arrow points, from: the point it comes from
+      const dx = end.x - from.x, dy = end.y - from.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+      const x1 = end.x - ux * 26, y1 = end.y - uy * 26, x2 = end.x + ux * 6, y2 = end.y + uy * 6, hw = 10;
+      heads.push({ x1: Math.min(x1, x2) - Math.abs(uy) * hw, x2: Math.max(x1, x2) + Math.abs(uy) * hw, y1: Math.min(y1, y2) - Math.abs(ux) * hw, y2: Math.max(y1, y2) + Math.abs(ux) * hw });
+    };
+    const nn = pts ? pts.length : 0;
+    const tEnd = nn >= 4 ? { x: pts[nn - 2], y: pts[nn - 1] } : tp0, tFrom = nn >= 4 ? { x: pts[nn - 4], y: pts[nn - 3] } : sp0;
+    const sEnd = nn >= 4 ? { x: pts[0], y: pts[1] } : sp0, sFrom = nn >= 4 ? { x: pts[2], y: pts[3] } : tp0;
+    // the line stops at the arrow base, so push the end out to the node edge
+    const grow = (end, from, node) => { const r = Math.max(node.outerWidth(), node.outerHeight()) / 2, np = node.position(), d = Math.hypot(np.x - end.x, np.y - end.y); if (d <= r + 24) { const dx = end.x - from.x, dy = end.y - from.y, L = Math.hypot(dx, dy) || 1; return { x: end.x + dx / L * Math.max(0, d - r), y: end.y + dy / L * Math.max(0, d - r) }; } return end; };
+    addHead(grow(tEnd, tFrom, e.target()), tFrom);
+    if (ar === 'both') addHead(grow(sEnd, sFrom, e.source()), sFrom);
+  });
+  const spots = (i, x = 0) => ({
+    b: { x: i.x, y: i.y + i.ry + i.m + x + i.h / 2 }, t: { x: i.x, y: i.y - i.ry - 4 - x - i.h / 2 },
+    r: { x: i.x + i.rx + 4 + x + i.w / 2, y: i.y }, l: { x: i.x - i.rx - 4 - x - i.w / 2, y: i.y } });
   const cur = new Map(); I.forEach(i => cur.set(i.id, Object.assign({ w: i.w, h: i.h }, spots(i).b)));
   const hit = (c, w, h, o) => Math.abs(c.x - o.x) < (w + o.w) / 2 && Math.abs(c.y - o.y) < (h + o.h) / 2;
   const cost = (i, c) => {
     let k = 0; const r = { x1: c.x - i.w / 2, x2: c.x + i.w / 2, y1: c.y - i.h / 2, y2: c.y + i.h / 2 };
     segs.forEach(g => { if (rectHit(g.a, g.b, r)) k += 2; });
     boxes.forEach(o => { if (o.id !== i.id && hit(c, i.w, i.h, o)) k += 3; });
+    heads.forEach(h => { if (c.x + i.w / 2 + 2 > h.x1 && c.x - i.w / 2 - 2 < h.x2 && c.y + i.h / 2 + 2 > h.y1 && c.y - i.h / 2 - 2 < h.y2) k += 40; });
     elRects.forEach(o => { if (hit(c, i.w, i.h, o)) k += 3; });
     cur.forEach((o, id) => { if (id !== i.id && hit(c, i.w, i.h, o)) k += 3; });
     return k;
   };
-  const sty = { t: { 'text-valign': 'top', 'text-margin-y': -4 }, r: { 'text-halign': 'right', 'text-valign': 'center', 'text-margin-x': 4, 'text-margin-y': 0 }, l: { 'text-halign': 'left', 'text-valign': 'center', 'text-margin-x': -4, 'text-margin-y': 0 } };
+  const sty = (k, x) => ({ b: { 'text-margin-y': 8 + x }, t: { 'text-valign': 'top', 'text-margin-y': -4 - x }, r: { 'text-halign': 'right', 'text-valign': 'center', 'text-margin-x': 4 + x, 'text-margin-y': 0 }, l: { 'text-halign': 'left', 'text-valign': 'center', 'text-margin-x': -4 - x, 'text-margin-y': 0 } }[k]);
   let sig = '';
   cy.batch(() => I.forEach(i => {
-    const sp = spots(i); let best = 'b', bc = cost(i, sp.b);
+    const sp = spots(i); let best = 'b', bx = 0, bc = cost(i, sp.b);
     if (bc > 0) ['t', 'r', 'l'].forEach(k => { const c = cost(i, sp[k]) + 0.4; if (c < bc) { bc = c; best = k; } });
-    cur.set(i.id, Object.assign({ w: i.w, h: i.h }, sp[best]));
-    sig += best;
-    if (best !== 'b') i.n.style(sty[best]);
+    // still touching an arrowhead? slide the name a little further out, on whichever side is clearest
+    if (bc >= 40) {
+      [10, 20, 32].forEach(x => { const sx = spots(i, x); ['b', 't', 'r', 'l'].forEach(k => { const c = cost(i, sx[k]) + 0.4 + x / 40; if (c < bc) { bc = c; best = k; bx = x; } }); });
+    }
+    cur.set(i.id, Object.assign({ w: i.w, h: i.h }, spots(i, bx)[best]));
+    sig += best + (bx ? bx : '');
+    if (best !== 'b' || bx) i.n.style(sty(best, bx));
   }));
   return sig;
 }
@@ -2562,12 +2606,17 @@ async function startOwn() {
   undoStack.length = 0; redoStack.length = 0; lastState = JSON.stringify(D); lastLab = ''; syncUndo();
   resetViewState(); markSeen(); saveLocal(); writeFile(); draw(); home();
 }
+// the graph canvas swallows touches (so taps never became clicks on overlays); keep them on the overlay
+function shieldTouch(el) {
+  ['touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'wheel'].forEach(t => el.addEventListener(t, e => e.stopPropagation(), { passive: true }));
+}
 function welcomeBox() {
   let w = $('wbox');
   if (!w) {
     w = document.createElement('div'); w.id = 'wbox'; w.hidden = true;
     w.innerHTML = '<div class="welcome"><h3>Welcome</h3><p>Try the example graph to see how it works, or start with an empty one.</p><div class="row"><button class="p" data-w="ex">Explore the example</button><button data-w="blank">Start blank</button></div></div>';
     w.addEventListener('click', e => { const b = e.target.closest('[data-w]'); if (!b) return; if (b.dataset.w === 'ex') loadExample(); else { markSeen(); home(); } });
+    shieldTouch(w);
     $('cy').appendChild(w);
   }
   w.hidden = !(firstVisit && !D.nodes.length);
@@ -2579,6 +2628,7 @@ function exBar() {
     b = document.createElement('div'); b.id = 'exbar'; b.hidden = true;
     b.innerHTML = 'This is example data \u00b7 <a href="#" data-ex="own">Start your own</a>';
     b.addEventListener('click', e => { if (e.target.closest('[data-ex]')) { e.preventDefault(); startOwn(); } });
+    shieldTouch(b);
     $('cy').appendChild(b);
   }
   b.hidden = !D.example;
@@ -3769,6 +3819,15 @@ async function initFile() {
 // phone-friendly save and open: share sheet out, file picker in
 const shareName = () => { const d = new Date(), p = x => String(x).padStart(2, '0'); return 'onecho-graph-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + '.json'; };
 $('bsh').hidden = hasFS();
+$('bpg').onclick = async () => {
+  const v = (($('drawer').querySelector('.dver') || {}).textContent || '').replace(/[^0-9.]/g, '');
+  const nm = 'OnEcho-Graph' + (v ? '-v' + v : '') + '.html';
+  try {
+    const r = await fetch(location.href.split('#')[0], { cache: 'no-cache' });
+    if (!r.ok) throw 0;
+    dl(nm, await r.text(), 'text/html'); toast('Saved ' + nm + ' (check your Downloads)');
+  } catch (e) { toast('This is already running from a file on your computer, so you already have the program file.'); }
+};
 $('bsh').onclick = () => { const nm = shareName(); dl(nm, JSON.stringify(D, null, 1), 'application/json'); toast('Saved ' + nm + ' (check your Downloads or the place you chose)'); if (hasFS()) { fsGone = true; fsPaint(); } closeDrawer(); };
 if (!hasFS()) $('bof').hidden = false;
 $('bof').onclick = () => { $('bff').value = ''; $('bff').click(); };
@@ -3865,7 +3924,7 @@ function renderProjects() {
     h += '<div style="margin-top:8px">' + (newOpen ? '' : '<button data-pj="new">New Project</button>') + '</div>';
     if (newOpen) h += '<div style="margin-top:8px"><input id="pname" placeholder="New project name" autocomplete="off" aria-label="New project name"><div class="pjnew"><button class="p" data-pj="blank">Create blank</button><button data-pj="copy" title="Save the graph that is open now as a new project">Copy of current</button><button data-pj="cancel">Cancel</button></div></div>';
   }
-  if (projMsg) h += '<p class="mu" style="margin-top:8px">' + esc(projMsg) + '</p>';
+  if (projMsg) h += '<p style="margin-top:8px;color:var(--ac);font-weight:600">' + esc(projMsg) + '</p>';
   el.innerHTML = h;
 }
 
@@ -3875,7 +3934,11 @@ async function resetViewState() {
 async function openProject(name, force) {
   const p = projects.find(x => x.name === name); if (!p) return;
   if (!force && fileHandle && activeProj === name && fileHandle.name === name) return;
-  if (!force && !fileHandle && D.nodes.length && !(await uiConfirm('The graph open now is only saved in this browser, not in the folder. Opening a project will replace it. Continue?\n\nTip: use "Copy of current" in the Menu to save it as a project first.'))) return;
+  if (!force && !fileHandle && D.nodes.length && !D.example) {
+    const c = await uiChoice('The graph on screen is only saved in this browser, not in your folder.', 'Save this as a project', 'Ignore');
+    if (!c) return;
+    if (c === 'a') { const nm = await saveAsNewProject(D); if (!nm) return; toast('Saved the graph on screen as ' + baseName(nm)); }
+  }
   try { await writing; } catch (e) {}
   let j;
   try { j = JSON.parse(await (await p.handle.getFile()).text()); } catch (e) { projMsg = 'Could not read ' + name + '.'; renderProjects(); return; }
@@ -3906,6 +3969,18 @@ async function firstProject() {
     await openProject(fname, true);
     toast('Made ' + baseName(fname) + (data.nodes.length ? ' from the graph on screen' : ' (empty)') + '. It now autosaves.');
   } catch (e) { projMsg = 'Could not make a first project: ' + (e && e.message ? e.message : e); }
+}
+// write a copy of `data` into the folder as the next free "Project N" (does not open it)
+async function saveAsNewProject(data) {
+  try {
+    try { await writing; } catch (e) {}
+    let fname = 'Project 1.json', i = 1;
+    while (projects.some(p => p.name.toLowerCase() === fname.toLowerCase())) fname = 'Project ' + (++i) + '.json';
+    const h = await dirHandle.getFileHandle(fname, { create: true });
+    const w = await h.createWritable(); await w.write(JSON.stringify(data, null, 1)); await w.close();
+    await listProjects();
+    return fname;
+  } catch (e) { projMsg = 'Could not save the project: ' + (e && e.message ? e.message : e); renderProjects(); return null; }
 }
 async function connectFolder() {
   try {
