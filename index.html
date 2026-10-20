@@ -167,7 +167,9 @@ i.sw { display: inline-block; width: 18px; height: 18px; border-radius: 5px; fle
   background: var(--sf);
   border-bottom: 1px solid var(--bd);
 }
-#cnt:empty { display: none; }  
+#cnt:empty { display: none; }
+p.ovl { margin: 0 0 7px; }
+p.ovl:last-of-type { margin-bottom: 12px; }  
 #chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .cf {  
   display: inline-flex; align-items: center; gap: 6px;
@@ -417,8 +419,8 @@ header #hb { flex: 0 0 auto; }
 .pj { display: flex; width: 100%; align-items: baseline; justify-content: space-between; gap: 10px; text-align: left; margin: 0 0 4px; background: var(--bg); }
 .pj.on { border-color: var(--ac); box-shadow: inset 0 0 0 1px var(--ac); }
 .pj small { color: var(--mu); white-space: nowrap; font-size: 12px; }
-.pjrow { display: flex; gap: 6px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.pjrow b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pjrow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.pjrow b { overflow-wrap: anywhere; }
 .pjrow span { display: flex; gap: 6px; flex: 0 0 auto; }
 .pjrow .pjname { display: flex; align-items: baseline; gap: 6px; flex: 1 1 auto; min-width: 0; }
 .pjrow .pjname small { color: var(--mu); font-size: 11px; flex: 0 0 auto; }
@@ -517,7 +519,7 @@ select:not([multiple]) {
   <h2>Welcome to OnEcho Graph</h2>
   <p class="lead">A map of things (nodes) and how they connect (links), saved in your browser.</p>
   <ol>
-    <li><b>Look around.</b> Drag to move, scroll or pinch to zoom. Tap a node to light up its links; tap empty space to go back.</li>
+    <li><b>Look around.</b> Drag empty space to move (or two-finger scroll, or hold <b>Space</b> and drag), pinch to zoom. Tap a node to light up its links; tap empty space to go back.</li>
     <li><b>+ Node.</b> Add a title, category, parameters and notes.</li>
     <li><b>+ Link.</b> Pick the two nodes. On a computer, Ctrl-click one node, then another.</li>
     <li><b>Search</b> finds text. <b>Filter</b> hides categories or nodes by parameter.</li>
@@ -588,7 +590,7 @@ select:not([multiple]) {
   </table>
 
   <h3>Select mode</h3>
-  <p>Press <b>Select</b> in the top bar. Tap nodes (phone), or drag a box or Ctrl-click (computer). Then show only the picked nodes.</p>
+  <p>Press <b>Select</b> in the top bar. Tap nodes (phone), or drag a box or Ctrl-click (computer). While selecting, drag to draw a box; to move around use two-finger scroll or hold <b>Space</b> and drag, and pinch to zoom. Then show only the picked nodes.</p>
   <p>Press <b>Trace</b> in the top bar, then tap a node to highlight its whole chain. <b>Downstream</b> follows arrows away from it, <b>Upstream</b> follows arrows into it. <b>Dotted lines</b> chooses whether dotted links are followed. All three are on by default; double-headed arrows count both ways, and links with no arrows are skipped. Tap a <b>link</b> instead to pick a path: it shows that link and everything downstream of it.</p>
   <figure class="hd"><svg viewBox="0 0 360 130" role="img" aria-label="Pick three nodes then show only those">
     <rect class="bx" x="4" y="6" width="160" height="118" rx="6"/>
@@ -706,7 +708,7 @@ select:not([multiple]) {
     <li><b>Undo</b> and <b>Redo</b> (the two curved arrows in the top bar, or <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Z</kbd> and <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>) step through your last 10 changes. A small message says which change was undone or redone, and hovering a button shows what it will do. Redo is forgotten after 5 minutes without an undo or redo. The history is cleared when you reload the page.</li>
     <li><b>Export read-only file</b> downloads a copy of what you can see right now: nodes and links hidden by Filter, Select or Blank slate are left out. Anyone can open it in a browser to look around, search, read the details and drag nodes around to tidy the view (moves are not saved, and <b>Reset layout</b> puts them back), but nobody can change your data. It is one self-contained file that also works offline, because the drawing library is bundled inside it (if that could not be fetched when you exported, the message says so and the file needs internet instead).</li>
     <li><b>Open File</b> and <b>Save File</b>: link a <code>.json</code> file (Edge or Chrome on a computer only).</li>
-    <li>In a browser that cannot link files (Safari, Firefox), the top bar on a computer always says autosave is not available and reminds you to use <b>Download File</b> regularly (on a phone this message is only in the Menu). On Edge or Chrome, the top bar says <b>Set up autosave by linking a folder or file</b> until one is linked. Click it to open the Menu. The same message is kept at the top of the Menu. In the top bar it goes away after 2 minutes, or once a save is done.</li>
+    <li>In a browser that cannot link files (Safari, Firefox), the top bar on a computer always says autosave is not available and reminds you to use <b>Download a Copy</b> regularly (on a phone this message is only in the Menu). On Edge or Chrome, the top bar says <b>Set up autosave by linking a folder or file</b> until one is linked. Click it to open the Menu. The same message is kept at the top of the Menu. In the top bar it goes away after 2 minutes, or once a save is done.</li>
     <li><b>Download File</b> downloads a copy of the graph as a <code>.json</code> file, the reverse of <b>Open from Files</b> (on an iPhone, choose where to keep it, such as Files; on a Mac, Safari saves it to Downloads unless you set it to ask). <b>Open from Files</b> loads a graph file from those places and replaces the graph in this browser.</li>
   </ul>
   <p>On a phone the panel shows at the bottom. <b>Expand</b> makes it full screen.</p>
@@ -737,6 +739,7 @@ select:not([multiple]) {
   <h3>2. A linked file (Edge or Chrome on a computer)</h3>
   <ul>
     <li><b>Save File</b> creates a <code>.json</code> file the first time and links it. <b>Open File</b> loads an existing one and links it.</li>
+    <li>When you link a folder that has no projects yet, a first project (<b>Project 1</b>) is made automatically from the graph on screen, or the example graph if the screen is empty, so it can autosave straight away.</li>
     <li>Every change is then written to the file too. <b>Save File</b> writes it now.</li>
     <li>On a later visit press <b>Reconnect</b> and allow access. <b>The file's contents replace what is on screen.</b></li>
     <li>If a write fails, press Save File to try again.</li>
@@ -2529,7 +2532,9 @@ function homeStats() {
   const nc = new Set(D.nodes.map(n => n.category || 'Uncategorised')).size;
   let h = '<div class="stats"><h2>Overview</h2>' +
     '<div class="big3"><div><b>' + D.nodes.length + '</b>nodes</div><div><b>' + nl + '</b>links</div><div><b>' + nc + '</b>categor' + (nc === 1 ? 'y' : 'ies') + '</div></div>' +
-    '<p class="mu">Add nodes and links to build a map of your business.<br>Create a knowledge graph to show how everything fits together and break down the silos between your teams.<br>Understand how all of your data flows connect and processes interact.</p>' +
+    '<p class="mu ovl">Add nodes and links to build a map of your business.</p>' +
+    '<p class="mu ovl">Create a knowledge graph to show how everything fits together and break down the silos between your teams.</p>' +
+    '<p class="mu ovl">Understand how all of your data flows connect and processes interact.</p>' +
     '<p class="mu">Tap a node or link to see it. Everything saves in this browser as you go; the <b>?</b> button explains how.</p>';
   if (!D.nodes.length) h += '<p>The graph is empty. Press <b>+ Node</b> to add the first one.</p>';
   return h + '</div>';
@@ -3409,6 +3414,37 @@ function setSelectMode(on) {
   if (on) { traceOn = false; traceId = null; cy.elements().unselect().removeClass('show faded conn'); }
   paintPick(); chips();
 }
+// moving around on a computer (mouse or trackpad), in every mode:
+// two-finger scroll pans, pinch (or Ctrl + scroll) zooms, hold Space and drag to pan.
+// In normal mode dragging empty space pans too; in Select mode dragging draws a box.
+let spaceHeld = false;
+const finePointer = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
+const selPanMouse = () => selectMode && finePointer();
+const zoomAt = (level, cx, cy0) => { const r = $('cy').getBoundingClientRect(); cy.zoom({ level: Math.max(cy.minZoom(), Math.min(cy.maxZoom(), level)), renderedPosition: { x: cx - r.left, y: cy0 - r.top } }); };
+$('cy').addEventListener('wheel', e => {
+  if (!finePointer()) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (e.ctrlKey || e.metaKey) zoomAt(cy.zoom() * Math.exp(-e.deltaY * 0.01), e.clientX, e.clientY);
+  else cy.panBy({ x: -e.deltaX, y: -e.deltaY });
+}, { capture: true, passive: false });
+// Safari sends trackpad pinch as gesture events instead of Ctrl + scroll
+let gz0 = 1;
+$('cy').addEventListener('gesturestart', e => { e.preventDefault(); gz0 = cy.zoom(); });
+$('cy').addEventListener('gesturechange', e => { e.preventDefault(); zoomAt(gz0 * e.scale, e.clientX, e.clientY); });
+$('cy').addEventListener('gestureend', e => e.preventDefault());
+const typing = el => el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable);
+let spaceDrag = null;
+const spaceOff = () => { spaceHeld = false; spaceDrag = null; $('cy').style.cursor = ''; };
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space' || spaceHeld || !finePointer() || typing(e.target) || !$('tv').hidden || !$('hv').hidden) return;
+  e.preventDefault(); spaceHeld = true; $('cy').style.cursor = 'grab';
+});
+// with Space held, dragging pans wherever it starts (even on a node, even in Select mode)
+$('cy').addEventListener('mousedown', e => { if (!spaceHeld) return; e.preventDefault(); e.stopImmediatePropagation(); spaceDrag = { x: e.clientX, y: e.clientY }; $('cy').style.cursor = 'grabbing'; }, true);
+document.addEventListener('mousemove', e => { if (!spaceDrag) return; cy.panBy({ x: e.clientX - spaceDrag.x, y: e.clientY - spaceDrag.y }); spaceDrag = { x: e.clientX, y: e.clientY }; });
+document.addEventListener('mouseup', () => { if (spaceDrag) { spaceDrag = null; $('cy').style.cursor = spaceHeld ? 'grab' : ''; } });
+document.addEventListener('keyup', e => { if (e.code === 'Space') spaceOff(); });
+window.addEventListener('blur', spaceOff);
 function togglePick(id) { if (selSet.has(id)) selSet.delete(id); else selSet.add(id); paintPick(); chips(); }
 function addParamPanel(msg) {
   const k = [...selSet].filter(id => node(id)).length;
@@ -3464,7 +3500,7 @@ function apply() {
   cy.edges().toggleClass('lbl', showLabels);
   const pn = pf ? cy.nodes().filter(x => !x.hasClass('hid')).length : -1;
   $('pfn').textContent = pn < 0 ? '' : pn + (pn === 1 ? ' node shown' : ' nodes shown');
-  $('cnt').textContent = t ? m.length + (m.length === 1 ? ' match' : ' matches') : '';
+  $('cnt').textContent = t ? m.length + (m.length === 1 ? ' match' : ' matches') + (m.length ? ' \u00b7 press Enter to zoom to ' + (m.length === 1 ? 'it' : 'them') : '') : '';
 }
 
 $('q').addEventListener('input', e => { q = e.target.value; apply(); });
@@ -3537,7 +3573,7 @@ new MutationObserver(() => { const t = $('fs').innerHTML.trim(); if ($('fsm').in
 function fsHint() {
   if (!hasFS()) {
     document.documentElement.classList.add('nofs');
-    $('fs').innerHTML = 'Autosave is not available in this browser. <a data-fs="dl" title="Download a copy of the graph now">Download File</a> regularly.';
+    $('fs').innerHTML = 'Autosave is not available in this browser. <a data-fs="dl" title="Download a copy of the graph now">Download a Copy</a> regularly.';
     $('fs').classList.add('hint'); syncTb(); return;
   }
   if (fileHandle || pendingHandle || dirHandle || dirPending || $('fs').textContent.trim()) return;
@@ -3759,7 +3795,7 @@ function renderProjects() {
     h += projects.map(p => {
       const on = !!fileHandle && activeProj === p.name && fileHandle.name === p.name;
       return '<button class="pj' + (on ? ' on' : '') + '" data-pj="open" data-name="' + esc(p.name) + '"><span>' + esc(baseName(p.name)) + '</span><small>' + (on ? D.nodes.length : p.nodes) + ' node' + ((on ? D.nodes.length : p.nodes) === 1 ? '' : 's') + '</small></button>';
-    }).join('') || '<p class="mu">No graphs in this folder yet. Create one below.</p>';
+    }).join('') || '<p class="mu">No projects in this folder yet. <b>Make a project</b> below so your changes can autosave.</p>';
     if (projSkipped) h += '<p class="mu">' + projSkipped + ' other .json file' + (projSkipped === 1 ? '' : 's') + ' in the folder ' + (projSkipped === 1 ? 'is' : 'are') + ' not graphs and ' + (projSkipped === 1 ? 'is' : 'are') + ' ignored.</p>';
     h += '<div style="margin-top:8px">' + (newOpen ? '' : '<button data-pj="new">New Project</button>') + '</div>';
     if (newOpen) h += '<div style="margin-top:8px"><input id="pname" placeholder="New project name" autocomplete="off" aria-label="New project name"><div class="pjnew"><button class="p" data-pj="blank">Create blank</button><button data-pj="copy" title="Save the graph that is open now as a new project">Copy of current</button><button data-pj="cancel">Cancel</button></div></div>';
@@ -3791,12 +3827,28 @@ async function openProject(name, force) {
   if (!force) toast('Opened project: ' + baseName(name));
 }
 
+// a folder with no projects gets a first one straight away, made from the graph on screen
+// (or the example graph if the screen is empty), so there is something to autosave into
+async function firstProject() {
+  try {
+    try { await writing; } catch (e) {}
+    let fname = 'Project 1.json', i = 1;
+    while (projects.some(p => p.name.toLowerCase() === fname.toLowerCase())) fname = 'Project ' + (++i) + '.json';
+    const data = D.nodes.length ? D : sample();
+    const h = await dirHandle.getFileHandle(fname, { create: true });
+    const w = await h.createWritable(); await w.write(JSON.stringify(data, null, 1)); await w.close();
+    await listProjects();
+    await openProject(fname, true);
+    toast('Made ' + baseName(fname) + ' from the graph on screen. It now autosaves.');
+  } catch (e) { projMsg = 'Could not make a first project: ' + (e && e.message ? e.message : e); }
+}
 async function connectFolder() {
   try {
     const h = await window.showDirectoryPicker({ id: 'mgraph', mode: 'readwrite', startIn: 'desktop' });
     dirHandle = h; dirPending = null; projMsg = ''; fldOpen = false;
     await idbPutKey('dir', h);
     await listProjects();
+    if (!projects.length) await firstProject();
     folderFs();
     renderProjects();
   } catch (e) { if (!(e && e.name === 'AbortError')) { projMsg = e && e.name === 'SecurityError' ? 'Folder access is blocked here. Open the file in Edge or Chrome on a computer.' : 'Could not open that folder: ' + (e && e.message ? e.message : e); renderProjects(); } }
