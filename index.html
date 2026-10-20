@@ -129,7 +129,7 @@ a[data-act] { color: var(--ac); cursor: pointer; text-decoration: underline; }
 a[data-act].mu { color: var(--mu); font-size: 12px; }   
 .sth { margin: 14px 0 4px; font-size: 12px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; color: var(--mu); }
 .stats p { margin: 3px 0; }
-.big3 { display: flex; gap: 8px; margin: 8px 0 2px; }
+.big3 { display: flex; gap: 8px; margin: 8px 0 14px; }
 .big3 div { flex: 1; background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 6px 8px; font-size: 12px; color: var(--mu); }
 .big3 b { display: block; font-size: 20px; color: var(--tx); }
 .bars { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 8px; align-items: center; font-size: 13px; }
@@ -313,6 +313,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 .mbar button.on, .mbar button.p { background: var(--ac); border-color: var(--ac); color: var(--bg); }
 #sbar input, #prow input, .mbar input, .mbar select { box-sizing: border-box; height: 26px; min-height: 0; padding: 0 8px; font-size: 14px; }
 .mbar select { flex: 1 1 140px; width: auto; }
+@media (min-width: 800px) { #gmenu { justify-content: flex-end; } #gmenu select { flex: 0 0 210px; width: 210px; } }
 #fvar { display: inline-flex; gap: 6px; }
 #fvar button { min-width: 30px; padding: 0 8px; }
 #fvar button.on { background: var(--ac); border-color: var(--ac); color: var(--bg); }
@@ -501,14 +502,14 @@ select:not([multiple]) {
     <button id="bo">Open File</button>
     <button id="bs">Save File</button>
     <button id="ba" hidden>Save as File</button>
-    <button id="bex" title="Load the pizza example to see how it works">Example graph</button>
   </div>
   <div class="dsec dmenu">
     <h3>Options</h3>
     <button id="bcc">Colours</button>
+    <button id="bex" title="Load the pizza example to see how it works">Example graph</button>
     <button id="bpg" title="Download this tool as one HTML file you can keep and open from your own computer">Download program file</button>
   </div>
-  <div class="dver">Version 2.1.0</div>
+  <div class="dver">Version 2.1.5</div>
 </aside>
 
 <div id="hv" hidden role="dialog" aria-label="Help">
@@ -709,7 +710,7 @@ select:not([multiple]) {
     <tr><td><b>Table</b></td><td>Spreadsheet editor (also under Menu as Edit Data Table).</td></tr>
     <tr><td><b>Graph</b></td><td>Layout · Reset Layout · Edge labels · Icons · Parameters.</td></tr>
     <tr><td><b>Curved arrows</b></td><td>Undo (back) and Redo (forward) your changes.</td></tr>
-    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · Data (Edit Data Table, View Data, Export read-only file, Download File, Open from Files, Open File, Save File, Example graph) · Options (Colours, Download program file).</td></tr>
+    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · Data (Edit Data Table, View Data, Export read-only file, Download File, Open from Files, Open File, Save File) · Options (Colours, Example graph, Download program file).</td></tr>
     <tr><td><b>?</b></td><td>This guide.</td></tr>
   </table>
   <p>Only one of Search, Filter and Graph is open at a time. Menu slides in from the left.</p>
@@ -883,11 +884,48 @@ const PAL = ['#1f77b4', '#e07b00', '#2a9d5c', '#b5379b', '#c0392b', '#7a6ff0', '
 
 const sample = () => ({"nodes": [{"id": "c1", "title": "Customer wants a pizza", "category": "Customer", "properties": {"time": "0 min"}, "markdown": "## Start of the journey\nThe customer is hungry and chooses **how** to order: the Deliveroo app or a phone call to the shop.\n\nBoth routes end up in the **Order system**.", "icon": "play"}, {"id": "x1", "title": "Orders on Deliveroo", "category": "External", "properties": {"channel": "Online", "time": "2 min"}, "markdown": "Customer picks a pizza and pays in the **Deliveroo** app. The order is pushed to the shop automatically.", "icon": "screen"}, {"id": "c2", "title": "Phones the shop", "category": "Customer", "properties": {"channel": "Phone", "time": "3 min"}, "markdown": "Customer rings the shop and says what they want, plus their name, address and phone number.", "icon": "mail"}, {"id": "p0", "title": "Takes the phone order", "category": "Process", "properties": {"time": "2 min"}, "markdown": "The call handler writes down the order, repeats it back and keys it into the Order system.", "icon": "process"}, {"id": "s1", "title": "Order system", "category": "System", "properties": {"holds": "All orders"}, "markdown": "One queue for **all** orders, from Deliveroo and from the phone. Every order gets a number and a status.", "icon": "server"}, {"id": "p1", "title": "Confirm order and payment", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Check the order is complete, the address is in range and payment is taken (phone orders pay the driver).", "icon": "check"}, {"id": "d1", "title": "All ingredients in stock?", "category": "Decision", "properties": {}, "markdown": "Yes: carry on. No: offer a swap or cancel the item and tell the customer.", "icon": "decision"}, {"id": "s2", "title": "Kitchen display", "category": "System", "properties": {}, "markdown": "Shows the chef the next order and its toppings. Marks it started and finished.", "icon": "screen"}, {"id": "p2", "title": "Stretch the dough", "category": "Process", "properties": {"time": "2 min"}, "markdown": "Take a rested dough ball and stretch it into a base.", "icon": "process"}, {"id": "p3", "title": "Add sauce and toppings", "category": "Process", "properties": {"time": "2 min"}, "markdown": "Spread the sauce, add cheese and the toppings listed on the ticket.", "icon": "process"}, {"id": "p4", "title": "Bake in the oven", "category": "Process", "properties": {"time": "7 min", "temp": "250 C"}, "markdown": "Bake until the crust is golden and the cheese has melted.", "icon": "factory"}, {"id": "d2", "title": "Quality check", "category": "Decision", "properties": {}, "markdown": "Right toppings? Cooked through? Not burnt? Pass it on, or remake it.", "icon": "decision"}, {"id": "p5", "title": "Cut, box and label", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Cut into slices, put in the box and stick on the order label.", "icon": "folder"}, {"id": "w1", "title": "Waits for a driver", "category": "Waiting", "properties": {"time": "5 min"}, "markdown": "The boxed pizza sits on the shelf until a driver is free. This is where it goes cold.", "icon": "wait"}, {"id": "p6", "title": "Hand over to driver", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Driver checks the label against the order and takes the pizza.", "icon": "check"}, {"id": "s3", "title": "Delivery tracking", "category": "System", "properties": {}, "markdown": "Shows the customer where the driver is. Deliveroo orders use the Deliveroo rider and app.", "icon": "cloud"}, {"id": "p7", "title": "Deliver to the door", "category": "Process", "properties": {"time": "15 min"}, "markdown": "Drive to the address and hand the pizza over.", "icon": "truck"}, {"id": "c3", "title": "Customer receives the pizza", "category": "Customer", "properties": {}, "markdown": "The customer takes the box and pays if it is a phone order.", "icon": "person"}, {"id": "z1", "title": "Eats the pizza", "category": "Done", "properties": {}, "markdown": "The end of the journey. Fed customers, and a chance to leave a rating.", "icon": "stop"}, {"id": "r1", "title": "Customer", "category": "Role", "properties": {"does": "Order, receive, eat"}, "markdown": "The person who orders, receives and eats the pizza.", "icon": "person"}, {"id": "r2", "title": "Call handler", "category": "Role", "properties": {"does": "Phone orders"}, "markdown": "Answers the phone and keys orders into the system. Also confirms payment.", "icon": "person"}, {"id": "r3", "title": "Chef", "category": "Role", "properties": {"does": "Dough, toppings, check"}, "markdown": "Makes the pizza from dough to box.", "icon": "person"}, {"id": "r4", "title": "Oven operator", "category": "Role", "properties": {"does": "Baking"}, "markdown": "Loads and unloads the oven and watches the bake.", "icon": "person"}, {"id": "r5", "title": "Driver", "category": "Role", "properties": {"does": "Delivery"}, "markdown": "Collects the pizza and delivers it.", "icon": "person"}, {"id": "r6", "title": "Shop manager", "category": "Role", "properties": {"does": "Stock, staff, system"}, "markdown": "Looks after stock, staffing and the order system.", "icon": "person"}, {"id": "i1", "title": "Phone orders get keyed wrongly", "category": "Issue", "properties": {"seen": "Weekly"}, "markdown": "Wrong toppings or address typed in during busy calls. Causes remakes and late deliveries.", "icon": "warning"}, {"id": "i2", "title": "Pizzas wait too long for a driver", "category": "Issue", "properties": {"seen": "Friday nights"}, "markdown": "On busy nights up to 10 minutes on the shelf. Customers get a cold pizza.", "icon": "warning"}, {"id": "k1", "title": "3C: Cold pizza on arrival", "category": "3C", "properties": {"status": "Open"}, "markdown": "**Concern:** customers say the pizza arrives lukewarm.\n\n**Cause:** it waits on the shelf for a driver and travels in a plain box.\n\n**Countermeasure:** heated bags and start baking when a driver is close.", "icon": "warning"}, {"id": "k2", "title": "3C: Wrong order delivered", "category": "3C", "properties": {"status": "Open"}, "markdown": "**Concern:** the wrong pizza reaches the customer.\n\n**Cause:** phone orders are keyed by hand and the label is not checked at handover.\n\n**Countermeasure:** read back the order and check the label at the handover step.", "icon": "warning"}, {"id": "a1", "title": "Idea: Heated delivery bags", "category": "Idea", "properties": {"effort": "Low"}, "markdown": "Keep pizzas hot on the way. Low cost, fast to try.", "icon": "star"}, {"id": "a2", "title": "Idea: Text link for phone orders", "category": "Idea", "properties": {"effort": "Medium"}, "markdown": "Send callers a text link to confirm their order and address, so nothing is mistyped.", "icon": "star"}, {"id": "a3", "title": "Idea: Bake when a driver is near", "category": "Idea", "properties": {"effort": "Medium"}, "markdown": "The Order system tells the kitchen when a driver is 5 minutes away, so the pizza is not left waiting.", "icon": "star"}], "edges": [{"id": "e1", "from": "c1", "to": "x1", "label": "online", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e2", "from": "c1", "to": "c2", "label": "phone", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e3", "from": "x1", "to": "s1", "label": "order in", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e4", "from": "c2", "to": "p0", "label": "call", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e5", "from": "p0", "to": "s1", "label": "keys in", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e6", "from": "s1", "to": "p1", "label": "new order", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e7", "from": "p1", "to": "d1", "label": "check", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e8", "from": "d1", "to": "p2", "label": "yes", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e9", "from": "p2", "to": "p3", "label": "stretch", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e10", "from": "p3", "to": "p4", "label": "topped", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e11", "from": "p4", "to": "d2", "label": "baked", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e12", "from": "d2", "to": "p5", "label": "pass", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e13", "from": "p5", "to": "w1", "label": "boxed", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e14", "from": "w1", "to": "p6", "label": "driver free", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e15", "from": "p6", "to": "p7", "label": "collected", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e16", "from": "p7", "to": "c3", "label": "arrives", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e17", "from": "c3", "to": "z1", "label": "eat", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e18", "from": "d2", "to": "p2", "label": "fail: remake", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e19", "from": "s1", "to": "s2", "label": "sends to", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e20", "from": "s2", "to": "p2", "label": "tells chef", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e21", "from": "p6", "to": "s3", "label": "tracks", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e22", "from": "s3", "to": "c3", "label": "shows", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e23", "from": "r1", "to": "c1", "label": "is", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e24", "from": "r1", "to": "c3", "label": "is", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e25", "from": "r1", "to": "z1", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e26", "from": "r2", "to": "p0", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e27", "from": "r2", "to": "p1", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e28", "from": "r3", "to": "p2", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e29", "from": "r3", "to": "p3", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e30", "from": "r3", "to": "d2", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e31", "from": "r4", "to": "p4", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e32", "from": "r5", "to": "p6", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e33", "from": "r5", "to": "p7", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e34", "from": "r6", "to": "d1", "label": "owns", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e35", "from": "r6", "to": "s1", "label": "manages", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e36", "from": "i1", "to": "p0", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e37", "from": "i2", "to": "w1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e38", "from": "k1", "to": "w1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e39", "from": "k2", "to": "p6", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e40", "from": "a1", "to": "k1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e41", "from": "a2", "to": "i1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e42", "from": "a3", "to": "i2", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e43", "from": "k2", "to": "i1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}]});
 
+// Make sure a graph read from storage or a file cannot break the page: drop entries that are not objects, and fill in missing or wrong-typed fields. Good data is left exactly as it is. Returns how many things were fixed.
+function cleanGraph(g) {
+  let fixed = 0, seq = 0;
+  const isObj = x => x && typeof x === 'object' && !Array.isArray(x);
+  const mk = p => p + Date.now().toString(36) + (seq++).toString(36);
+  const idOf = v => (typeof v === 'string' ? v : (typeof v === 'number' && isFinite(v) ? String(v) : ''));
+  const fix = (o, k, ok, val) => { if (!ok(o[k])) { o[k] = val; fixed++; } };
+  const nOld = g.nodes.length, eOld = g.edges.length;
+  g.nodes = g.nodes.filter(isObj);
+  g.edges = g.edges.filter(isObj);
+  fixed += (nOld - g.nodes.length) + (eOld - g.edges.length);
+  g.nodes.forEach(n => {
+    const f0 = fixed;
+    if (typeof n.id !== 'string' || !n.id) { const v = idOf(n.id); n.id = v || mk('n'); fixed++; }
+    fix(n, 'title', v => typeof v === 'string', n.title == null ? '' : String(n.title));
+    fix(n, 'category', v => typeof v === 'string', n.category == null ? '' : String(n.category));
+    fix(n, 'properties', isObj, {});
+    fix(n, 'markdown', v => typeof v === 'string', n.markdown == null ? '' : String(n.markdown));
+    if (fixed > f0 + 1) fixed = f0 + 1;   // count each broken entry once
+  });
+  const keep = [];
+  g.edges.forEach(e => {
+    const f0 = fixed, f = idOf(e.from), t = idOf(e.to);
+    if (!f || !t) { fixed++; return; }
+    if (e.from !== f) { e.from = f; fixed++; }
+    if (e.to !== t) { e.to = t; fixed++; }
+    if (typeof e.id !== 'string' || !e.id) { e.id = idOf(e.id) || mk('e'); fixed++; }
+    fix(e, 'label', v => typeof v === 'string', e.label == null ? '' : String(e.label));
+    fix(e, 'properties', isObj, {});
+    if (fixed > f0 + 1) fixed = f0 + 1;
+    keep.push(e);
+  });
+  g.edges = keep;
+  if ('colors' in g && !isObj(g.colors)) { delete g.colors; fixed++; }
+  return fixed;
+}
 let D;
 try { D = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+if (D && Array.isArray(D.nodes) && Array.isArray(D.edges)) cleanGraph(D); else D = null;
 const WELCOME_KEY = 'kg-welcome-v1';
 let firstVisit = false;
-if (!D || !D.nodes || !D.edges) {
+if (!D) {
   D = { nodes: [], edges: [] };
   try { firstVisit = !localStorage.getItem(WELCOME_KEY); } catch (e) { firstVisit = true; }
 }
@@ -960,6 +998,8 @@ const save = label => {
   }
   saveLocal(); writeFile(); exBar();
 };
+// after loading a file with broken entries: say how many were skipped or repaired (shown just after the usual message)
+const fixNote = n => { if (n) setTimeout(() => toast(n + ' broken item' + (n === 1 ? ' was' : 's were') + ' skipped or repaired in that file.'), 1200); };
 let toastT = null;
 function toast(m) {
   const t = document.getElementById('toast'); if (!t) return;
@@ -1128,8 +1168,8 @@ function style() {
     { selector: 'node', style: {
         label: n => lblWrap(n.data('label')).s, 'background-color': 'data(color)', 'font-size': 11, color: css('--tx'),
         'text-valign': 'bottom', 'text-margin-y': 8,
-        'text-wrap': 'wrap', 'line-height': 1.3, 'text-max-width': n => lblWrap(n.data('label')).w,
-        'text-outline-color': css('--bg'), 'text-outline-width': 3, 'text-outline-opacity': .9,
+        'text-wrap': 'wrap', 'text-max-width': n => lblWrap(n.data('label')).w,
+        'text-background-color': css('--bg'), 'text-background-opacity': .9, 'text-background-padding': 2, 'text-background-shape': 'roundrectangle',
         'min-zoomed-font-size': 7,
         width: 26, height: 26, 'border-width': 2, 'border-color': css('--sf'), 'z-index-compare': 'manual', 'z-index': 20 } },
     { selector: 'node[img]', style: { 'background-image': 'data(img)', 'background-fit': 'contain', 'background-clip': 'none', 'background-position-x': '50%', 'background-position-y': '50%' } },
@@ -1140,7 +1180,7 @@ function style() {
     { selector: 'edge', style: {
         width: 1.5, 'line-color': css('--mu'), 'target-arrow-color': css('--mu'), 'source-arrow-color': css('--mu'), 'target-arrow-shape': 'triangle', 'source-arrow-shape': 'none',
         'curve-style': 'bezier', 'control-point-step-size': 45, 'z-index-compare': 'manual', 'z-index': 0,
-        'font-size': 9, color: css('--mu'), 'text-wrap': 'wrap', 'line-height': 1.35, 'text-max-width': e => lblWrap(e.data('label')).w,
+        'font-size': 9, color: css('--mu'), 'text-wrap': 'wrap', 'text-max-width': e => lblWrap(e.data('label')).w,
         'text-background-color': css('--bg'), 'text-background-opacity': .85, 'text-background-padding': 2 } },
     { selector: 'edge[arrow = "both"]', style: { 'source-arrow-shape': 'triangle' } },
     { selector: 'edge[arrow = "none"]', style: { 'target-arrow-shape': 'none' } },
@@ -2423,6 +2463,32 @@ function nameGaps() {
   cy.batch(() => cy.nodes().forEach(n => { const m = inWay.has(n.id()) ? 8 : 3; baseM.set(n.id(), m); n.style('text-margin-y', m); }));
 }
 const baseM = new Map();
+// A coarse grid so each name is only tested against the things near it. It only chooses which items to test; the exact original test still decides every hit, so results are unchanged.
+function makeGrid(cs = 90) {
+  const cells = new Map(), big = new Set(), K = (a, b) => (a + 8192) * 16384 + (b + 8192);
+  let stamp = 0;
+  return {
+    add(v, x1, y1, x2, y2) {
+      const a = Math.floor(x1 / cs), b = Math.floor(x2 / cs), c = Math.floor(y1 / cs), d = Math.floor(y2 / cs), en = { v, s: 0, c: null };
+      if ((b - a + 1) * (d - c + 1) > 256) { big.add(en); en.c = 'big'; return en; }
+      en.c = [a, b, c, d];
+      for (let i = a; i <= b; i++) for (let j = c; j <= d; j++) { const k = K(i, j); let m = cells.get(k); if (!m) cells.set(k, m = new Set()); m.add(en); }
+      return en;
+    },
+    remove(en) {
+      if (en.c === 'big') { big.delete(en); return; }
+      const [a, b, c, d] = en.c;
+      for (let i = a; i <= b; i++) for (let j = c; j <= d; j++) { const m = cells.get(K(i, j)); if (m) m.delete(en); }
+    },
+    query(x1, y1, x2, y2, fn) {
+      stamp++;
+      const a = Math.floor(x1 / cs), b = Math.floor(x2 / cs), c = Math.floor(y1 / cs), d = Math.floor(y2 / cs);
+      const visit = en => { if (en.s !== stamp) { en.s = stamp; fn(en.v); } };
+      big.forEach(visit);
+      for (let i = a; i <= b; i++) for (let j = c; j <= d; j++) { const m = cells.get(K(i, j)); if (m) m.forEach(visit); }
+    }
+  };
+}
 // A node's name normally sits below it. If that spot is crossed by a link or covers a link label, another node or another name, try above, right and left and use the clearest.
 function placeNodeLabels() {
   cy.batch(() => cy.nodes().forEach(n => { n.removeStyle('text-halign text-valign text-margin-x'); n.style('text-margin-y', baseM.get(n.id()) != null ? baseM.get(n.id()) : 8); }));
@@ -2431,7 +2497,7 @@ function placeNodeLabels() {
   const I = [];
   nodes.forEach(n => {
     const t = String(n.data('label')), p = n.position();
-    I.push({ n, id: n.id(), x: p.x, y: p.y, rx: n.outerWidth() / 2, ry: n.outerHeight() / 2, w: lblWrap(t).est + 12, h: lblWrap(t).n * 14.5 + 8, m: baseM.get(n.id()) != null ? baseM.get(n.id()) : 8 });
+    I.push({ n, id: n.id(), x: p.x, y: p.y, rx: n.outerWidth() / 2, ry: n.outerHeight() / 2, w: lblWrap(t).est + 12, h: lblWrap(t).n * 13 + 8, m: baseM.get(n.id()) != null ? baseM.get(n.id()) : 8 });
   });
   const boxes = cy.nodes().filter(n => !n.hasClass('hid')).map(n => { const p = n.position(); return { id: n.id(), x: p.x, y: p.y, w: n.outerWidth(), h: n.outerHeight() }; });
   const segs = [];
@@ -2445,29 +2511,38 @@ function placeNodeLabels() {
     const rs = e._private.rscratch, pts = rs && rs.allpts, sp0 = e.source().position(), tp0 = e.target().position();
     const addHead = (end, from) => {   // end: where the arrow points, from: the point it comes from
       const dx = end.x - from.x, dy = end.y - from.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-      const x1 = end.x - ux * 26, y1 = end.y - uy * 26, x2 = end.x + ux * 6, y2 = end.y + uy * 6, hw = 10;
+      const x1 = end.x - ux * 16, y1 = end.y - uy * 16, x2 = end.x + ux * 2, y2 = end.y + uy * 2, hw = 7;
       heads.push({ x1: Math.min(x1, x2) - Math.abs(uy) * hw, x2: Math.max(x1, x2) + Math.abs(uy) * hw, y1: Math.min(y1, y2) - Math.abs(ux) * hw, y2: Math.max(y1, y2) + Math.abs(ux) * hw });
     };
     const nn = pts ? pts.length : 0;
-    const tEnd = nn >= 4 ? { x: pts[nn - 2], y: pts[nn - 1] } : tp0, tFrom = nn >= 4 ? { x: pts[nn - 4], y: pts[nn - 3] } : sp0;
-    const sEnd = nn >= 4 ? { x: pts[0], y: pts[1] } : sp0, sFrom = nn >= 4 ? { x: pts[2], y: pts[3] } : tp0;
+    // with no drawn path yet, the tip is where the straight line meets the edge of the node
+    const edgeOf = (node, other) => { const p = node.position(), q = other.position(), dx = q.x - p.x, dy = q.y - p.y, rx = node.outerWidth() / 2, ry = node.outerHeight() / 2, t = Math.min(rx / (Math.abs(dx) || 1e-9), ry / (Math.abs(dy) || 1e-9), 1); return { x: p.x + dx * t, y: p.y + dy * t }; };
+    const tEnd = nn >= 4 ? { x: pts[nn - 2], y: pts[nn - 1] } : edgeOf(e.target(), e.source()), tFrom = nn >= 4 ? { x: pts[nn - 4], y: pts[nn - 3] } : sp0;
+    const sEnd = nn >= 4 ? { x: pts[0], y: pts[1] } : edgeOf(e.source(), e.target()), sFrom = nn >= 4 ? { x: pts[2], y: pts[3] } : tp0;
     // the line stops at the arrow base, so push the end out to the node edge
     const grow = (end, from, node) => { const r = Math.max(node.outerWidth(), node.outerHeight()) / 2, np = node.position(), d = Math.hypot(np.x - end.x, np.y - end.y); if (d <= r + 24) { const dx = end.x - from.x, dy = end.y - from.y, L = Math.hypot(dx, dy) || 1; return { x: end.x + dx / L * Math.max(0, d - r), y: end.y + dy / L * Math.max(0, d - r) }; } return end; };
     addHead(grow(tEnd, tFrom, e.target()), tFrom);
     if (ar === 'both') addHead(grow(sEnd, sFrom, e.source()), sFrom);
   });
+  const gSeg = makeGrid(), gBox = makeGrid(), gHead = makeGrid(), gEl = makeGrid(), gCur = makeGrid(), curE = new Map();
+  segs.forEach(g => gSeg.add(g, Math.min(g.a.x, g.b.x), Math.min(g.a.y, g.b.y), Math.max(g.a.x, g.b.x), Math.max(g.a.y, g.b.y)));
+  boxes.forEach(o => gBox.add(o, o.x - o.w / 2, o.y - o.h / 2, o.x + o.w / 2, o.y + o.h / 2));
+  heads.forEach(h => gHead.add(h, h.x1, h.y1, h.x2, h.y2));
+  elRects.forEach(o => gEl.add(o, o.x - o.w / 2, o.y - o.h / 2, o.x + o.w / 2, o.y + o.h / 2));
+  const setCur = (id, o) => { const old = curE.get(id); if (old) gCur.remove(old); o.id = id; curE.set(id, gCur.add(o, o.x - o.w / 2, o.y - o.h / 2, o.x + o.w / 2, o.y + o.h / 2)); };
   const spots = (i, x = 0) => ({
     b: { x: i.x, y: i.y + i.ry + i.m + x + i.h / 2 }, t: { x: i.x, y: i.y - i.ry - 4 - x - i.h / 2 },
     r: { x: i.x + i.rx + 4 + x + i.w / 2, y: i.y }, l: { x: i.x - i.rx - 4 - x - i.w / 2, y: i.y } });
-  const cur = new Map(); I.forEach(i => cur.set(i.id, Object.assign({ w: i.w, h: i.h }, spots(i).b)));
+  I.forEach(i => setCur(i.id, Object.assign({ w: i.w, h: i.h }, spots(i).b)));
   const hit = (c, w, h, o) => Math.abs(c.x - o.x) < (w + o.w) / 2 && Math.abs(c.y - o.y) < (h + o.h) / 2;
   const cost = (i, c) => {
     let k = 0; const r = { x1: c.x - i.w / 2, x2: c.x + i.w / 2, y1: c.y - i.h / 2, y2: c.y + i.h / 2 };
-    segs.forEach(g => { if (rectHit(g.a, g.b, r)) k += 2; });
-    boxes.forEach(o => { if (o.id !== i.id && hit(c, i.w, i.h, o)) k += 3; });
-    heads.forEach(h => { if (c.x + i.w / 2 + 2 > h.x1 && c.x - i.w / 2 - 2 < h.x2 && c.y + i.h / 2 + 2 > h.y1 && c.y - i.h / 2 - 2 < h.y2) k += 40; });
-    elRects.forEach(o => { if (hit(c, i.w, i.h, o)) k += 3; });
-    cur.forEach((o, id) => { if (id !== i.id && hit(c, i.w, i.h, o)) k += 3; });
+    const q = [r.x1 - 3, r.y1 - 3, r.x2 + 3, r.y2 + 3];
+    gSeg.query(...q, g => { if (rectHit(g.a, g.b, r)) k += 2; });
+    gBox.query(...q, o => { if (o.id !== i.id && hit(c, i.w, i.h, o)) k += 3; });
+    gHead.query(...q, h => { const tw = i.w / 2 - 6 + 1, th = i.h / 2 - 4 + 1; if (c.x + tw > h.x1 && c.x - tw < h.x2 && c.y + th > h.y1 && c.y - th < h.y2) k += 40; });
+    gEl.query(...q, o => { if (hit(c, i.w, i.h, o)) k += 3; });
+    gCur.query(...q, o => { if (o.id !== i.id && hit(c, i.w, i.h, o)) k += 3; });
     return k;
   };
   const sty = (k, x) => ({ b: { 'text-margin-y': 8 + x }, t: { 'text-valign': 'top', 'text-margin-y': -4 - x }, r: { 'text-halign': 'right', 'text-valign': 'center', 'text-margin-x': 4 + x, 'text-margin-y': 0 }, l: { 'text-halign': 'left', 'text-valign': 'center', 'text-margin-x': -4 - x, 'text-margin-y': 0 } }[k]);
@@ -2477,16 +2552,18 @@ function placeNodeLabels() {
     if (bc > 0) ['t', 'r', 'l'].forEach(k => { const c = cost(i, sp[k]) + 0.4; if (c < bc) { bc = c; best = k; } });
     // still touching an arrowhead? slide the name a little further out, on whichever side is clearest
     if (bc >= 40) {
-      [10, 20, 32].forEach(x => { const sx = spots(i, x); ['b', 't', 'r', 'l'].forEach(k => { const c = cost(i, sx[k]) + 0.4 + x / 40; if (c < bc) { bc = c; best = k; bx = x; } }); });
+      [4, 8, 12, 18, 26].forEach(x => { const sx = spots(i, x); ['b', 't', 'r', 'l'].forEach(k => { const c = cost(i, sx[k]) + 0.4 + x / 6; if (c < bc) { bc = c; best = k; bx = x; } }); });
     }
-    cur.set(i.id, Object.assign({ w: i.w, h: i.h }, spots(i, bx)[best]));
+    setCur(i.id, Object.assign({ w: i.w, h: i.h }, spots(i, bx)[best]));
     sig += best + (bx ? bx : '');
     if (best !== 'b' || bx) i.n.style(sty(best, bx));
   }));
   return sig;
 }
 
-const settle = () => { nameGaps(); const s1 = placeNodeLabels(); placeLabels(); if (placeNodeLabels() !== s1) placeLabels(); dashFit(); };
+const sameRects = (a, b) => a.length === b.length && a.every((o, i) => o.x === b[i].x && o.y === b[i].y && o.w === b[i].w && o.h === b[i].h);
+// names are placed, then link labels, then names again only if the link labels ended up somewhere new (otherwise the second pass would give exactly the same answer)
+const settle = () => { nameGaps(); const s1 = placeNodeLabels(), before = elRects; placeLabels(); if (!sameRects(before, elRects) && placeNodeLabels() !== s1) placeLabels(); dashFit(); };
 const labelSoon = () => { clearTimeout(lblTimer); lblTimer = setTimeout(settle, 90); };
 cy.on('add remove position class layoutstop dragfree', labelSoon);
 
@@ -2930,7 +3007,7 @@ P.addEventListener('click', async ev => {
     try {
       const j = JSON.parse($('dj').value);
       if (!Array.isArray(j.nodes) || !Array.isArray(j.edges)) throw 0;
-      D = j; save(); draw(); home();
+      D = j; fixNote(cleanGraph(D)); save(); draw(); home();
     } catch (e) {
       dataView('That is not valid graph JSON: it needs "nodes" and "edges" arrays.');
     }
@@ -3761,7 +3838,7 @@ async function linkFile(h) {
   const j = JSON.parse(await (await h.getFile()).text());
   if (!isGraph(j)) throw new Error('That file is not valid graph JSON: it needs "nodes" and "edges" arrays.');
   const perm = await h.requestPermission({ mode: 'readwrite' });
-  D = j;
+  D = j; fixNote(cleanGraph(D));
   saveLocal();
   draw();
   home();
@@ -3836,7 +3913,7 @@ $('bff').onchange = async () => {
   let j; try { j = JSON.parse(await file.text()); } catch (e) { j = null; }
   if (!isGraph(j)) { await uiAlert(file.name + ' is not a graph file.'); return; }
   if (D.nodes.length && !(await uiConfirm('Opening ' + file.name + ' replaces the graph in this browser. Continue?'))) return;
-  D = j; undoStack.length = 0; redoStack.length = 0; lastState = JSON.stringify(D); lastLab = ''; syncUndo();
+  D = j; fixNote(cleanGraph(D)); undoStack.length = 0; redoStack.length = 0; lastState = JSON.stringify(D); lastLab = ''; syncUndo();
   resetViewState(); save(); draw(); home(); closeDrawer(); toast('Opened ' + file.name);
 };
 if (hasFS()) {
@@ -3944,7 +4021,7 @@ async function openProject(name, force) {
   try { j = JSON.parse(await (await p.handle.getFile()).text()); } catch (e) { projMsg = 'Could not read ' + name + '.'; renderProjects(); return; }
   if (!isGraph(j)) { projMsg = name + ' is not a graph file.'; renderProjects(); return; }
   try { if ((await p.handle.requestPermission({ mode: 'readwrite' })) !== 'granted') { projMsg = 'Permission to edit ' + name + ' was not granted.'; renderProjects(); return; } } catch (e) {}
-  D = j; fileHandle = p.handle; pendingHandle = null; activeProj = name; projMsg = '';
+  D = j; fixNote(cleanGraph(D)); fileHandle = p.handle; pendingHandle = null; activeProj = name; projMsg = '';
   try { localStorage.setItem(PROJ_KEY, name); } catch (e) {}
   idbSet(p.handle);
   undoStack.length = 0; redoStack.length = 0; lastState = JSON.stringify(D); lastLab = ''; syncUndo();
