@@ -181,6 +181,7 @@ i.sw { display: inline-block; width: 18px; height: 18px; border-radius: 5px; fle
 header #fs { display: block; flex: 1 1 0; min-width: 0; margin-left: 12px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 header.hasfs:has(#fs:not(:empty):not(.fsgone)) h1 { margin-right: 0; }
 #fs.fsgone { display: none !important; }
+@media (max-width: 799px) { html.nofs #fs { display: none !important; } }
 #fsm { font-size: 13px; color: var(--mu); }
 header #fs.hint { white-space: normal; line-height: 1.25; }
 #fs a { color: var(--ac); cursor: pointer; text-decoration: underline; }
@@ -387,7 +388,7 @@ header button#bh:hover { color: var(--ac); }
 .tvbody th[data-dir="1"]::after { content: " \25B2"; font-size: 10px; }
 .tvbody th[data-dir="-1"]::after { content: " \25BC"; font-size: 10px; }
 .tvbody td:first-child input { font-weight: 600; }
-.tvbody .c1 { min-width: 170px; } .tvbody .c2 { min-width: 130px; } .tvbody .c3 { min-width: 190px; } .tvbody .c4 { min-width: 340px; width: 45%; } .tvbody .c5 { min-width: 140px; } .tvbody .c6 { min-width: 84px; width: 90px; }
+.tvbody .c1 { min-width: 210px; } .tvbody .c2 { min-width: 130px; } .tvbody .c3 { min-width: 190px; } .tvbody .c4 { min-width: 340px; width: 45%; } .tvbody .c5 { min-width: 140px; } .tvbody .c6 { min-width: 84px; width: 90px; }
 #tvl-t td { vertical-align: middle; }
 #tvl-t th:nth-child(4), #tvl-t th:nth-child(5) { text-align: center; }
 #tvl-t td:nth-child(4) select, #tvl-t td:nth-child(5) select { text-align: center; text-align-last: center; }
@@ -480,12 +481,12 @@ select:not([multiple]) {
     <button id="bt2">Edit Data Table</button>
     <button id="bd">View Data (JSON)</button>
     <button id="bro" title="Download a read-only copy of what is showing now">Export read-only file</button>
-    <button id="bsh" title="Save a copy of this graph as a .json file">Save to Files</button>
+    <button id="bsh" title="Save a copy of this graph as a .json file">Download File</button>
     <button id="bof" hidden title="Choose a graph file from Files, Dropbox, Google Drive or OneDrive">Open from Files</button>
     <input type="file" id="bff" accept=".json,application/json,text/plain" hidden>
     <button id="bo">Open File</button>
     <button id="bs">Save File</button>
-    <button id="ba">Save as File</button>
+    <button id="ba" hidden>Save as File</button>
     <button id="bcc">Colours</button>
   </div>
 </aside>
@@ -688,7 +689,7 @@ select:not([multiple]) {
     <tr><td><b>Table</b></td><td>Spreadsheet editor (also under Menu as Edit Data Table).</td></tr>
     <tr><td><b>Graph</b></td><td>Layout · Reset Layout · Edge labels · Icons · Parameters.</td></tr>
     <tr><td><b>Curved arrows</b></td><td>Undo (back) and Redo (forward) your changes.</td></tr>
-    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · View Data (JSON) · Export read-only file · Save to Files · Open from Files · Open File · Save File · Save as File · Colours.</td></tr>
+    <tr><td><b>Menu</b> (three lines, top left)</td><td>Dark mode switch · Projects · View Data (JSON) · Export read-only file · Download File · Open from Files · Open File · Save File · Colours.</td></tr>
     <tr><td><b>?</b></td><td>This guide.</td></tr>
   </table>
   <p>Only one of Search, Filter and Graph is open at a time. Menu slides in from the left.</p>
@@ -704,9 +705,9 @@ select:not([multiple]) {
     <li><b>View Data (JSON)</b>: <b>Copy</b> your graph as a backup. Paste JSON and press <b>Apply JSON</b> to load it. <b>Reset to example</b> replaces everything. Questions appear in a small box in the page.</li>
     <li><b>Undo</b> and <b>Redo</b> (the two curved arrows in the top bar, or <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Z</kbd> and <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>) step through your last 10 changes. A small message says which change was undone or redone, and hovering a button shows what it will do. Redo is forgotten after 5 minutes without an undo or redo. The history is cleared when you reload the page.</li>
     <li><b>Export read-only file</b> downloads a copy of what you can see right now: nodes and links hidden by Filter, Select or Blank slate are left out. Anyone can open it in a browser to look around, search, read the details and drag nodes around to tidy the view (moves are not saved, and <b>Reset layout</b> puts them back), but nobody can change your data. It is one self-contained file that also works offline, because the drawing library is bundled inside it (if that could not be fetched when you exported, the message says so and the file needs internet instead).</li>
-    <li><b>Open File</b>, <b>Save File</b>, <b>Save as File</b>: link a <code>.json</code> file (Edge or Chrome on a computer only).</li>
-    <li>In a browser that cannot link files (Safari, Firefox), the top bar says autosave is not available and reminds you to use <b>Save to Files</b> regularly. On Edge or Chrome, the top bar says <b>Set up autosave by linking a folder or file</b> until one is linked. Click it to open the Menu. The same message is kept at the top of the Menu. In the top bar it goes away after 2 minutes, or once a save is done.</li>
-    <li><b>Save to Files</b> saves a copy of the graph as a <code>.json</code> file, the reverse of <b>Open from Files</b> (on an iPhone, choose where to keep it, such as Files). <b>Open from Files</b> loads a graph file from those places and replaces the graph in this browser.</li>
+    <li><b>Open File</b> and <b>Save File</b>: link a <code>.json</code> file (Edge or Chrome on a computer only).</li>
+    <li>In a browser that cannot link files (Safari, Firefox), the top bar on a computer always says autosave is not available and reminds you to use <b>Download File</b> regularly (on a phone this message is only in the Menu). On Edge or Chrome, the top bar says <b>Set up autosave by linking a folder or file</b> until one is linked. Click it to open the Menu. The same message is kept at the top of the Menu. In the top bar it goes away after 2 minutes, or once a save is done.</li>
+    <li><b>Download File</b> downloads a copy of the graph as a <code>.json</code> file, the reverse of <b>Open from Files</b> (on an iPhone, choose where to keep it, such as Files; on a Mac, Safari saves it to Downloads unless you set it to ask). <b>Open from Files</b> loads a graph file from those places and replaces the graph in this browser.</li>
   </ul>
   <p>On a phone the panel shows at the bottom. <b>Expand</b> makes it full screen.</p>
   <p class="back"><a data-go="top">↑ Back to contents</a></p>
@@ -735,7 +736,7 @@ select:not([multiple]) {
 
   <h3>2. A linked file (Edge or Chrome on a computer)</h3>
   <ul>
-    <li><b>Save as File</b> creates a <code>.json</code> file and links it. <b>Open File</b> loads an existing one and links it.</li>
+    <li><b>Save File</b> creates a <code>.json</code> file the first time and links it. <b>Open File</b> loads an existing one and links it.</li>
     <li>Every change is then written to the file too. <b>Save File</b> writes it now.</li>
     <li>On a later visit press <b>Reconnect</b> and allow access. <b>The file's contents replace what is on screen.</b></li>
     <li>If a write fails, press Save File to try again.</li>
@@ -2856,7 +2857,7 @@ let tvTab = 'n';
 let tvDirty = false;
 
 const tvNodeRow = n => '<tr data-id="' + esc(n ? n.id : '') + '">' +
-  '<td class="c1"><input data-f="title" placeholder="Title" value="' + esc(n ? n.title : '') + '"></td>' +
+  '<td class="c1"><textarea data-f="title" rows="1" placeholder="Title">' + esc(n ? n.title : '') + '</textarea></td>' +
   '<td class="c2"><input data-f="cat" list="tvk" placeholder="Category" value="' + esc(n ? n.category : '') + '"></td>' +
   '<td class="c6"><input data-f="x" type="number" step="1" placeholder="X" value="' + (n && n.x != null ? shown(n.x) : '') + '"></td>' +
   '<td class="c6"><input data-f="y" type="number" step="1" placeholder="Y" value="' + (n && n.y != null ? shown(n.y) : '') + '"></td>' +
@@ -2870,7 +2871,7 @@ const tvLinkRow = e => {
   return '<tr data-id="' + esc(e ? e.id : '') + '"' + (e ? ' data-from="' + esc(e.from) + '" data-to="' + esc(e.to) + '" data-ft="' + esc(a.title) + '" data-tt="' + esc(b.title) + '"' : '') + '>' +
     '<td class="c1"><input data-f="from" list="tvt" placeholder="From (title)" value="' + esc(a ? a.title : '') + '"></td>' +
     '<td class="c1"><input data-f="to" list="tvt" placeholder="To (title)" value="' + esc(b ? b.title : '') + '"></td>' +
-    '<td class="c2"><input data-f="label" placeholder="Label" value="' + esc(e ? e.label : '') + '"></td>' +
+    '<td class="c2"><textarea data-f="label" rows="1" placeholder="Label">' + esc(e ? e.label : '') + '</textarea></td>' +
     '<td class="c5">' + sel('arrow', e ? e.arrow || 'to' : 'to', [['to', 'One way →'], ['both', 'Both ways ↔'], ['none', 'No arrows —']]) + '</td>' +
     '<td class="c5">' + sel('line', e ? e.line || 'solid' : 'solid', [['solid', 'Solid'], ['dotted', 'Dotted']]) + '</td>' +
     '<td class="c3"><textarea data-f="props" rows="1" placeholder="name: value">' + esc(e ? pStr(e.properties) : '') + '</textarea></td>' +
@@ -2908,10 +2909,10 @@ const tvBody = () => $(tvTab === 'n' ? 'tvn-t' : 'tvl-t').querySelector('tbody')
 function tvAdd(count) {
   for (let i = 0; i < count; i++) tvBody().insertAdjacentHTML('beforeend', tvTab === 'n' ? tvNodeRow(null) : tvLinkRow(null));
   const rows = tvBody().rows, first = rows[rows.length - count];
-  if (first) { const f = first.querySelector('input'); if (f) f.focus(); first.scrollIntoView({ block: 'nearest' }); }
+  if (first) { const f = first.querySelector('input,textarea'); if (f) f.focus(); first.scrollIntoView({ block: 'nearest' }); }
 }
 const tvProps = tr => pObj(tvVal(tr, 'props'));
-const tvVal = (tr, f) => tr.querySelector('[data-f="' + f + '"]').value;
+const tvVal = (tr, f) => { const v = tr.querySelector('[data-f="' + f + '"]').value; return (f === 'title' || f === 'label') ? v.replace(/\s*\n\s*/g, ' ') : v; };
 
 function tvApply() {
   const rows = t => [...$(t).querySelectorAll('tbody tr')];
@@ -3274,7 +3275,7 @@ $('tvb').addEventListener('click', e => {
 });
 
 $('tvb').addEventListener('keydown', e => {
-  if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
+  if (e.key !== 'Enter' || !(e.target.tagName === 'INPUT' || (e.target.tagName === 'TEXTAREA' && (e.target.dataset.f === 'title' || e.target.dataset.f === 'label')))) return;
   e.preventDefault();
   const td = e.target.closest('td'), tr = td.parentElement, col = td.cellIndex;
   let nx = tr.nextElementSibling;
@@ -3530,12 +3531,13 @@ const isGraph = j => j && Array.isArray(j.nodes) && Array.isArray(j.edges);
 const FILE_TYPES = [{ description: 'Graph JSON', accept: { 'application/json': ['.json'] } }];
 
 let fsHintOn = false, fsGone = false;
-const fsPaint = () => { $('fs').classList.toggle('fsgone', fsGone); const t = $('fs').innerHTML.trim(); $('fsm').innerHTML = t; $('fsm').hidden = !t; if (typeof syncTb === 'function') syncTb(); };
-setTimeout(() => { fsGone = true; fsPaint(); }, 120000);
-new MutationObserver(() => { const t = $('fs').innerHTML.trim(); if ($('fsm').innerHTML !== t) { $('fsm').innerHTML = t; $('fsm').hidden = !t; } $('fs').classList.toggle('fsgone', fsGone); }).observe($('fs'), { childList: true, subtree: true, characterData: true });
+const fsPaint = () => { $('fs').classList.toggle('fsgone', fsGone); const t = $('fs').innerHTML.trim(); $('fsm').innerHTML = t; $('fsm').hidden = !t || hasFS(); if (typeof syncTb === 'function') syncTb(); };
+setTimeout(() => { if (hasFS()) { fsGone = true; fsPaint(); } }, 120000);
+new MutationObserver(() => { const t = $('fs').innerHTML.trim(); if ($('fsm').innerHTML !== t) { $('fsm').innerHTML = t; $('fsm').hidden = !t || hasFS(); } $('fs').classList.toggle('fsgone', fsGone); }).observe($('fs'), { childList: true, subtree: true, characterData: true });
 function fsHint() {
   if (!hasFS()) {
-    $('fs').innerHTML = 'Autosave is not available in this browser. <a data-fs="dl" title="Download a copy of the graph now">Save to Files</a> regularly.';
+    document.documentElement.classList.add('nofs');
+    $('fs').innerHTML = 'Autosave is not available in this browser. <a data-fs="dl" title="Download a copy of the graph now">Download File</a> regularly.';
     $('fs').classList.add('hint'); syncTb(); return;
   }
   if (fileHandle || pendingHandle || dirHandle || dirPending || $('fs').textContent.trim()) return;
@@ -3631,7 +3633,7 @@ async function openFile() {
 
 async function saveAs() {
   try {
-    const h = await window.showSaveFilePicker({ suggestedName: 'graph.json', types: FILE_TYPES });
+    const h = await window.showSaveFilePicker({ suggestedName: shareName(), types: FILE_TYPES });
     fileHandle = h; pendingHandle = null; activeProj = '';
     idbSet(h);
     await writeFile();
@@ -3664,9 +3666,9 @@ async function initFile() {
 }
 
 // phone-friendly save and open: share sheet out, file picker in
-const shareName = () => (activeProj ? baseName(activeProj) : 'graph') + '.json';
-$('bsh').hidden = false;
-$('bsh').onclick = () => { dl(shareName(), JSON.stringify(D, null, 1), 'application/json'); toast('Saved ' + shareName() + ' (check your Downloads or the place you chose)'); fsGone = true; fsPaint(); closeDrawer(); };
+const shareName = () => { const d = new Date(), p = x => String(x).padStart(2, '0'); return 'onecho-graph-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + '.json'; };
+$('bsh').hidden = hasFS();
+$('bsh').onclick = () => { const nm = shareName(); dl(nm, JSON.stringify(D, null, 1), 'application/json'); toast('Saved ' + nm + ' (check your Downloads or the place you chose)'); if (hasFS()) { fsGone = true; fsPaint(); } closeDrawer(); };
 if (!hasFS()) $('bof').hidden = false;
 $('bof').onclick = () => { $('bff').value = ''; $('bff').click(); };
 $('bff').onchange = async () => {
@@ -3882,7 +3884,7 @@ function placeFs() {
 fsMq.addEventListener('change', placeFs);
 
 function syncTb() {
-  $('tb').hidden = $('sbar').hidden && $('chips').hidden && $('selp').hidden && $('posbar').hidden && (fsInHeader || !$('fs').textContent || fsGone);
+  $('tb').hidden = $('sbar').hidden && $('chips').hidden && $('selp').hidden && $('posbar').hidden && (fsInHeader || !$('fs').textContent || fsGone || (!hasFS() && !fsInHeader));
   markOpen();
 }
 
