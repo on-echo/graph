@@ -168,6 +168,15 @@ i.sw { display: inline-block; width: 18px; height: 18px; border-radius: 5px; fle
   border-bottom: 1px solid var(--bd);
 }
 #cnt:empty { display: none; }
+#exbar { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); z-index: 6; background: var(--sf); color: var(--tx); border: 1px solid var(--bd); border-radius: 99px; padding: 5px 14px; font-size: 13px; white-space: nowrap; box-shadow: 0 1px 6px rgba(0,0,0,.15); }
+#exbar a { color: var(--ac); font-weight: 600; }
+.welcome { border: 1px solid var(--bd); border-radius: 12px; padding: 16px 18px; background: var(--sf); color: var(--tx); box-shadow: 0 2px 14px rgba(0,0,0,.15); max-width: 320px; }
+#wbox { position: absolute; inset: 0; z-index: 6; display: flex; align-items: center; justify-content: center; padding: 16px; pointer-events: none; }
+#wbox[hidden] { display: none; }
+#wbox .welcome { pointer-events: auto; }
+.welcome p { margin: 0 0 12px; color: var(--mu); }
+.welcome h3 { margin: 0 0 4px; font-size: 15px; }
+.welcome .row { display: flex; gap: 8px; flex-wrap: wrap; }
 p.ovl { margin: 0 0 7px; }
 p.ovl:last-of-type { margin-bottom: 12px; }  
 #chips { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -402,6 +411,8 @@ header button#bh:hover { color: var(--ac); }
 #bu:disabled, #br:disabled { opacity: .45; cursor: default; }
 header #hb { flex: 0 0 auto; }
 #scrim { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 290; }
+/* version tag pinned to the bottom left of the Menu */
+.dver { position: sticky; bottom: 0; padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px)); font-size: 12px; color: var(--mu); background: var(--sf); border-top: 1px solid var(--bd); }
 #drawer { position: fixed; top: 0; bottom: 0; left: 0; width: min(330px, 90vw); background: var(--sf); color: var(--tx); border-right: 1px solid var(--bd); z-index: 300; overflow: auto; box-shadow: 4px 0 24px rgba(0,0,0,.25); padding-top: env(safe-area-inset-top, 0px); }
 #scrim[hidden], #drawer[hidden] { display: none; }
 .dhead { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--bd); font-size: 16px; }
@@ -490,7 +501,9 @@ select:not([multiple]) {
     <button id="bs">Save File</button>
     <button id="ba" hidden>Save as File</button>
     <button id="bcc">Colours</button>
+    <button id="bex" title="Load the pizza example to see how it works">Example graph</button>
   </div>
+  <div class="dver">Version 2.0.0</div>
 </aside>
 
 <div id="hv" hidden role="dialog" aria-label="Help">
@@ -707,6 +720,7 @@ select:not([multiple]) {
     <li><b>View Data (JSON)</b>: <b>Copy</b> your graph as a backup. Paste JSON and press <b>Apply JSON</b> to load it. <b>Reset to example</b> replaces everything. Questions appear in a small box in the page.</li>
     <li><b>Undo</b> and <b>Redo</b> (the two curved arrows in the top bar, or <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Z</kbd> and <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>) step through your last 10 changes. A small message says which change was undone or redone, and hovering a button shows what it will do. Redo is forgotten after 5 minutes without an undo or redo. The history is cleared when you reload the page.</li>
     <li><b>Export read-only file</b> downloads a copy of what you can see right now: nodes and links hidden by Filter, Select or Blank slate are left out. Anyone can open it in a browser to look around, search, read the details and drag nodes around to tidy the view (moves are not saved, and <b>Reset layout</b> puts them back), but nobody can change your data. It is one self-contained file that also works offline, because the drawing library is bundled inside it (if that could not be fetched when you exported, the message says so and the file needs internet instead).</li>
+    <li><b>Example graph</b> (Menu) loads a small pizza-shop example to explore. A strip says <b>This is example data</b> until you change something; <b>Start your own</b> empties it.</li>
     <li><b>Open File</b> and <b>Save File</b>: link a <code>.json</code> file (Edge or Chrome on a computer only).</li>
     <li>In a browser that cannot link files (Safari, Firefox), the top bar on a computer always says autosave is not available and reminds you to use <b>Download a Copy</b> regularly (on a phone this message is only in the Menu). On Edge or Chrome, the top bar says <b>Set up autosave by linking a folder or file</b> until one is linked. Click it to open the Menu. The same message is kept at the top of the Menu. In the top bar it goes away after 2 minutes, or once a save is done.</li>
     <li><b>Download File</b> downloads a copy of the graph as a <code>.json</code> file, the reverse of <b>Open from Files</b> (on an iPhone, choose where to keep it, such as Files; on a Mac, Safari saves it to Downloads unless you set it to ask). <b>Open from Files</b> loads a graph file from those places and replaces the graph in this browser.</li>
@@ -739,7 +753,7 @@ select:not([multiple]) {
   <h3>2. A linked file (Edge or Chrome on a computer)</h3>
   <ul>
     <li><b>Save File</b> creates a <code>.json</code> file the first time and links it. <b>Open File</b> loads an existing one and links it.</li>
-    <li>When you link a folder that has no projects yet, a first project (<b>Project 1</b>) is made automatically from the graph on screen, or the example graph if the screen is empty, so it can autosave straight away.</li>
+    <li>When you link a folder that has no projects yet, a first project (<b>Project 1</b>) is made automatically from the graph on screen (empty if there is nothing there, or only the example), so it can autosave straight away.</li>
     <li>Every change is then written to the file too. <b>Save File</b> writes it now.</li>
     <li>On a later visit press <b>Reconnect</b> and allow access. <b>The file's contents replace what is on screen.</b></li>
     <li>If a write fails, press Save File to try again.</li>
@@ -858,13 +872,21 @@ const SWATCHES = (() => {
   return out;
 })();
 let swOpen = null;
-const PAL = ['#1f77b4', '#e07b00', '#2a9d5c', '#b5379b', '#c0392b', '#7a6ff0', '#0f9d9d', '#e0527a'];
+// default category colours, used in the order categories appear (18 before any repeat)
+const PAL = ['#1f77b4', '#e07b00', '#2a9d5c', '#b5379b', '#c0392b', '#7a6ff0', '#0f9d9d', '#e0527a',
+  '#8a8d1a', '#d4a017', '#8c564b', '#2f4b9a', '#1aa7d9', '#6aa84f', '#4b5563', '#7a3f98', '#ad1457', '#0b6e4f'];
 
-const sample = () => ({"nodes": [{"id": "c1", "title": "Customer wants a pizza", "category": "Customer", "properties": {"time": "0 min"}, "markdown": "## Start of the journey\nThe customer is hungry and chooses **how** to order: the Deliveroo app or a phone call to the shop.\n\nBoth routes end up in the **Order system**.", "icon": "play"}, {"id": "x1", "title": "Orders on Deliveroo", "category": "External", "properties": {"channel": "Online", "time": "2 min"}, "markdown": "Customer picks a pizza and pays in the **Deliveroo** app. The order is pushed to the shop automatically.", "icon": "screen"}, {"id": "c2", "title": "Phones the shop", "category": "Customer", "properties": {"channel": "Phone", "time": "3 min"}, "markdown": "Customer rings the shop and says what they want, plus their name, address and phone number.", "icon": "mail"}, {"id": "p0", "title": "Takes the phone order", "category": "Process", "properties": {"time": "2 min"}, "markdown": "The call handler writes down the order, repeats it back and keys it into the Order system.", "icon": "process"}, {"id": "s1", "title": "Order system", "category": "System", "properties": {"holds": "All orders"}, "markdown": "One queue for **all** orders, from Deliveroo and from the phone. Every order gets a number and a status.", "icon": "server"}, {"id": "p1", "title": "Confirm order and payment", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Check the order is complete, the address is in range and payment is taken (phone orders pay the driver).", "icon": "check"}, {"id": "d1", "title": "All ingredients in stock?", "category": "Decision", "properties": {}, "markdown": "Yes: carry on. No: offer a swap or cancel the item and tell the customer.", "icon": "decision"}, {"id": "s2", "title": "Kitchen display", "category": "System", "properties": {}, "markdown": "Shows the chef the next order and its toppings. Marks it started and finished.", "icon": "screen"}, {"id": "p2", "title": "Stretch the dough", "category": "Process", "properties": {"time": "2 min"}, "markdown": "Take a rested dough ball and stretch it into a base.", "icon": "process"}, {"id": "p3", "title": "Add sauce and toppings", "category": "Process", "properties": {"time": "2 min"}, "markdown": "Spread the sauce, add cheese and the toppings listed on the ticket.", "icon": "process"}, {"id": "p4", "title": "Bake in the oven", "category": "Process", "properties": {"time": "7 min", "temp": "250 C"}, "markdown": "Bake until the crust is golden and the cheese has melted.", "icon": "factory"}, {"id": "d2", "title": "Quality check", "category": "Decision", "properties": {}, "markdown": "Right toppings? Cooked through? Not burnt? Pass it on, or remake it.", "icon": "decision"}, {"id": "p5", "title": "Cut, box and label", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Cut into slices, put in the box and stick on the order label.", "icon": "folder"}, {"id": "w1", "title": "Waits for a driver", "category": "Waiting", "properties": {"time": "5 min"}, "markdown": "The boxed pizza sits on the shelf until a driver is free. This is where it goes cold.", "icon": "wait"}, {"id": "p6", "title": "Hand over to driver", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Driver checks the label against the order and takes the pizza.", "icon": "check"}, {"id": "s3", "title": "Delivery tracking", "category": "System", "properties": {}, "markdown": "Shows the customer where the driver is. Deliveroo orders use the Deliveroo rider and app.", "icon": "cloud"}, {"id": "p7", "title": "Deliver to the door", "category": "Process", "properties": {"time": "15 min"}, "markdown": "Drive to the address and hand the pizza over.", "icon": "truck"}, {"id": "c3", "title": "Customer receives the pizza", "category": "Customer", "properties": {}, "markdown": "The customer takes the box and pays if it is a phone order.", "icon": "person"}, {"id": "z1", "title": "Eats the pizza", "category": "Done", "properties": {}, "markdown": "The end of the journey. Fed customers, and a chance to leave a rating.", "icon": "stop"}, {"id": "r1", "title": "Customer", "category": "Role", "properties": {"does": "Order, receive, eat"}, "markdown": "The person who orders, receives and eats the pizza.", "icon": "person"}, {"id": "r2", "title": "Call handler", "category": "Role", "properties": {"does": "Phone orders"}, "markdown": "Answers the phone and keys orders into the system. Also confirms payment.", "icon": "person"}, {"id": "r3", "title": "Chef", "category": "Role", "properties": {"does": "Dough, toppings, check"}, "markdown": "Makes the pizza from dough to box.", "icon": "person"}, {"id": "r4", "title": "Oven operator", "category": "Role", "properties": {"does": "Baking"}, "markdown": "Loads and unloads the oven and watches the bake.", "icon": "person"}, {"id": "r5", "title": "Driver", "category": "Role", "properties": {"does": "Delivery"}, "markdown": "Collects the pizza and delivers it.", "icon": "person"}, {"id": "r6", "title": "Shop manager", "category": "Role", "properties": {"does": "Stock, staff, system"}, "markdown": "Looks after stock, staffing and the order system.", "icon": "person"}, {"id": "i1", "title": "Phone orders get keyed wrongly", "category": "Issue", "properties": {"seen": "Weekly"}, "markdown": "Wrong toppings or address typed in during busy calls. Causes remakes and late deliveries.", "icon": "warning"}, {"id": "i2", "title": "Pizzas wait too long for a driver", "category": "Issue", "properties": {"seen": "Friday nights"}, "markdown": "On busy nights up to 10 minutes on the shelf. Customers get a cold pizza.", "icon": "warning"}, {"id": "k1", "title": "3C: Cold pizza on arrival", "category": "3C", "properties": {"status": "Open"}, "markdown": "**Concern:** customers say the pizza arrives lukewarm.\n\n**Cause:** it waits on the shelf for a driver and travels in a plain box.\n\n**Countermeasure:** heated bags and start baking when a driver is close.", "icon": "warning"}, {"id": "k2", "title": "3C: Wrong order delivered", "category": "3C", "properties": {"status": "Open"}, "markdown": "**Concern:** the wrong pizza reaches the customer.\n\n**Cause:** phone orders are keyed by hand and the label is not checked at handover.\n\n**Countermeasure:** read back the order and check the label at the handover step.", "icon": "warning"}, {"id": "a1", "title": "Idea: Heated delivery bags", "category": "Idea", "properties": {"effort": "Low"}, "markdown": "Keep pizzas hot on the way. Low cost, fast to try.", "icon": "star"}, {"id": "a2", "title": "Idea: Text link for phone orders", "category": "Idea", "properties": {"effort": "Medium"}, "markdown": "Send callers a text link to confirm their order and address, so nothing is mistyped.", "icon": "star"}, {"id": "a3", "title": "Idea: Bake when a driver is near", "category": "Idea", "properties": {"effort": "Medium"}, "markdown": "The Order system tells the kitchen when a driver is 5 minutes away, so the pizza is not left waiting.", "icon": "star"}], "edges": [{"id": "e1", "from": "c1", "to": "x1", "label": "online", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e2", "from": "c1", "to": "c2", "label": "phone", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e3", "from": "x1", "to": "s1", "label": "order in", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e4", "from": "c2", "to": "p0", "label": "call", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e5", "from": "p0", "to": "s1", "label": "keys in", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e6", "from": "s1", "to": "p1", "label": "new order", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e7", "from": "p1", "to": "d1", "label": "check", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e8", "from": "d1", "to": "p2", "label": "yes", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e9", "from": "p2", "to": "p3", "label": "stretch", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e10", "from": "p3", "to": "p4", "label": "topped", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e11", "from": "p4", "to": "d2", "label": "baked", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e12", "from": "d2", "to": "p5", "label": "pass", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e13", "from": "p5", "to": "w1", "label": "boxed", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e14", "from": "w1", "to": "p6", "label": "driver free", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e15", "from": "p6", "to": "p7", "label": "collected", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e16", "from": "p7", "to": "c3", "label": "arrives", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e17", "from": "c3", "to": "z1", "label": "eat", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e18", "from": "d2", "to": "p2", "label": "fail: remake", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e19", "from": "s1", "to": "s2", "label": "sends to", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e20", "from": "s2", "to": "p2", "label": "tells chef", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e21", "from": "p6", "to": "s3", "label": "tracks", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e22", "from": "s3", "to": "c3", "label": "shows", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e23", "from": "r1", "to": "c1", "label": "is", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e24", "from": "r1", "to": "c3", "label": "is", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e25", "from": "r1", "to": "z1", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e26", "from": "r2", "to": "p0", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e27", "from": "r2", "to": "p1", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e28", "from": "r3", "to": "p2", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e29", "from": "r3", "to": "p3", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e30", "from": "r3", "to": "d2", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e31", "from": "r4", "to": "p4", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e32", "from": "r5", "to": "p6", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e33", "from": "r5", "to": "p7", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e34", "from": "r6", "to": "d1", "label": "owns", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e35", "from": "r6", "to": "s1", "label": "manages", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e36", "from": "i1", "to": "p0", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e37", "from": "i2", "to": "w1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e38", "from": "k1", "to": "w1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e39", "from": "k2", "to": "p6", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e40", "from": "a1", "to": "k1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e41", "from": "a2", "to": "i1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e42", "from": "a3", "to": "i2", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e43", "from": "k2", "to": "i1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}], "colors": {"Customer": "#2a9d5c", "Process": "#1f77b4", "Decision": "#7a6ff0", "Waiting": "#8a8d1a", "Done": "#4b5563", "System": "#0f9d9d", "External": "#e07b00", "Issue": "#c0392b", "Idea": "#b5379b", "3C": "#7a3f98", "Role": "#e8590c"}});
+const sample = () => ({"nodes": [{"id": "c1", "title": "Customer wants a pizza", "category": "Customer", "properties": {"time": "0 min"}, "markdown": "## Start of the journey\nThe customer is hungry and chooses **how** to order: the Deliveroo app or a phone call to the shop.\n\nBoth routes end up in the **Order system**.", "icon": "play"}, {"id": "x1", "title": "Orders on Deliveroo", "category": "External", "properties": {"channel": "Online", "time": "2 min"}, "markdown": "Customer picks a pizza and pays in the **Deliveroo** app. The order is pushed to the shop automatically.", "icon": "screen"}, {"id": "c2", "title": "Phones the shop", "category": "Customer", "properties": {"channel": "Phone", "time": "3 min"}, "markdown": "Customer rings the shop and says what they want, plus their name, address and phone number.", "icon": "mail"}, {"id": "p0", "title": "Takes the phone order", "category": "Process", "properties": {"time": "2 min"}, "markdown": "The call handler writes down the order, repeats it back and keys it into the Order system.", "icon": "process"}, {"id": "s1", "title": "Order system", "category": "System", "properties": {"holds": "All orders"}, "markdown": "One queue for **all** orders, from Deliveroo and from the phone. Every order gets a number and a status.", "icon": "server"}, {"id": "p1", "title": "Confirm order and payment", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Check the order is complete, the address is in range and payment is taken (phone orders pay the driver).", "icon": "check"}, {"id": "d1", "title": "All ingredients in stock?", "category": "Decision", "properties": {}, "markdown": "Yes: carry on. No: offer a swap or cancel the item and tell the customer.", "icon": "decision"}, {"id": "s2", "title": "Kitchen display", "category": "System", "properties": {}, "markdown": "Shows the chef the next order and its toppings. Marks it started and finished.", "icon": "screen"}, {"id": "p2", "title": "Stretch the dough", "category": "Process", "properties": {"time": "2 min"}, "markdown": "Take a rested dough ball and stretch it into a base.", "icon": "process"}, {"id": "p3", "title": "Add sauce and toppings", "category": "Process", "properties": {"time": "2 min"}, "markdown": "Spread the sauce, add cheese and the toppings listed on the ticket.", "icon": "process"}, {"id": "p4", "title": "Bake in the oven", "category": "Process", "properties": {"time": "7 min", "temp": "250 C"}, "markdown": "Bake until the crust is golden and the cheese has melted.", "icon": "factory"}, {"id": "d2", "title": "Quality check", "category": "Decision", "properties": {}, "markdown": "Right toppings? Cooked through? Not burnt? Pass it on, or remake it.", "icon": "decision"}, {"id": "p5", "title": "Cut, box and label", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Cut into slices, put in the box and stick on the order label.", "icon": "folder"}, {"id": "w1", "title": "Waits for a driver", "category": "Waiting", "properties": {"time": "5 min"}, "markdown": "The boxed pizza sits on the shelf until a driver is free. This is where it goes cold.", "icon": "wait"}, {"id": "p6", "title": "Hand over to driver", "category": "Process", "properties": {"time": "1 min"}, "markdown": "Driver checks the label against the order and takes the pizza.", "icon": "check"}, {"id": "s3", "title": "Delivery tracking", "category": "System", "properties": {}, "markdown": "Shows the customer where the driver is. Deliveroo orders use the Deliveroo rider and app.", "icon": "cloud"}, {"id": "p7", "title": "Deliver to the door", "category": "Process", "properties": {"time": "15 min"}, "markdown": "Drive to the address and hand the pizza over.", "icon": "truck"}, {"id": "c3", "title": "Customer receives the pizza", "category": "Customer", "properties": {}, "markdown": "The customer takes the box and pays if it is a phone order.", "icon": "person"}, {"id": "z1", "title": "Eats the pizza", "category": "Done", "properties": {}, "markdown": "The end of the journey. Fed customers, and a chance to leave a rating.", "icon": "stop"}, {"id": "r1", "title": "Customer", "category": "Role", "properties": {"does": "Order, receive, eat"}, "markdown": "The person who orders, receives and eats the pizza.", "icon": "person"}, {"id": "r2", "title": "Call handler", "category": "Role", "properties": {"does": "Phone orders"}, "markdown": "Answers the phone and keys orders into the system. Also confirms payment.", "icon": "person"}, {"id": "r3", "title": "Chef", "category": "Role", "properties": {"does": "Dough, toppings, check"}, "markdown": "Makes the pizza from dough to box.", "icon": "person"}, {"id": "r4", "title": "Oven operator", "category": "Role", "properties": {"does": "Baking"}, "markdown": "Loads and unloads the oven and watches the bake.", "icon": "person"}, {"id": "r5", "title": "Driver", "category": "Role", "properties": {"does": "Delivery"}, "markdown": "Collects the pizza and delivers it.", "icon": "person"}, {"id": "r6", "title": "Shop manager", "category": "Role", "properties": {"does": "Stock, staff, system"}, "markdown": "Looks after stock, staffing and the order system.", "icon": "person"}, {"id": "i1", "title": "Phone orders get keyed wrongly", "category": "Issue", "properties": {"seen": "Weekly"}, "markdown": "Wrong toppings or address typed in during busy calls. Causes remakes and late deliveries.", "icon": "warning"}, {"id": "i2", "title": "Pizzas wait too long for a driver", "category": "Issue", "properties": {"seen": "Friday nights"}, "markdown": "On busy nights up to 10 minutes on the shelf. Customers get a cold pizza.", "icon": "warning"}, {"id": "k1", "title": "3C: Cold pizza on arrival", "category": "3C", "properties": {"status": "Open"}, "markdown": "**Concern:** customers say the pizza arrives lukewarm.\n\n**Cause:** it waits on the shelf for a driver and travels in a plain box.\n\n**Countermeasure:** heated bags and start baking when a driver is close.", "icon": "warning"}, {"id": "k2", "title": "3C: Wrong order delivered", "category": "3C", "properties": {"status": "Open"}, "markdown": "**Concern:** the wrong pizza reaches the customer.\n\n**Cause:** phone orders are keyed by hand and the label is not checked at handover.\n\n**Countermeasure:** read back the order and check the label at the handover step.", "icon": "warning"}, {"id": "a1", "title": "Idea: Heated delivery bags", "category": "Idea", "properties": {"effort": "Low"}, "markdown": "Keep pizzas hot on the way. Low cost, fast to try.", "icon": "star"}, {"id": "a2", "title": "Idea: Text link for phone orders", "category": "Idea", "properties": {"effort": "Medium"}, "markdown": "Send callers a text link to confirm their order and address, so nothing is mistyped.", "icon": "star"}, {"id": "a3", "title": "Idea: Bake when a driver is near", "category": "Idea", "properties": {"effort": "Medium"}, "markdown": "The Order system tells the kitchen when a driver is 5 minutes away, so the pizza is not left waiting.", "icon": "star"}], "edges": [{"id": "e1", "from": "c1", "to": "x1", "label": "online", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e2", "from": "c1", "to": "c2", "label": "phone", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e3", "from": "x1", "to": "s1", "label": "order in", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e4", "from": "c2", "to": "p0", "label": "call", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e5", "from": "p0", "to": "s1", "label": "keys in", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e6", "from": "s1", "to": "p1", "label": "new order", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e7", "from": "p1", "to": "d1", "label": "check", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e8", "from": "d1", "to": "p2", "label": "yes", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e9", "from": "p2", "to": "p3", "label": "stretch", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e10", "from": "p3", "to": "p4", "label": "topped", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e11", "from": "p4", "to": "d2", "label": "baked", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e12", "from": "d2", "to": "p5", "label": "pass", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e13", "from": "p5", "to": "w1", "label": "boxed", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e14", "from": "w1", "to": "p6", "label": "driver free", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e15", "from": "p6", "to": "p7", "label": "collected", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e16", "from": "p7", "to": "c3", "label": "arrives", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e17", "from": "c3", "to": "z1", "label": "eat", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e18", "from": "d2", "to": "p2", "label": "fail: remake", "arrow": "to", "line": "solid", "properties": {}}, {"id": "e19", "from": "s1", "to": "s2", "label": "sends to", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e20", "from": "s2", "to": "p2", "label": "tells chef", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e21", "from": "p6", "to": "s3", "label": "tracks", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e22", "from": "s3", "to": "c3", "label": "shows", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e23", "from": "r1", "to": "c1", "label": "is", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e24", "from": "r1", "to": "c3", "label": "is", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e25", "from": "r1", "to": "z1", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e26", "from": "r2", "to": "p0", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e27", "from": "r2", "to": "p1", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e28", "from": "r3", "to": "p2", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e29", "from": "r3", "to": "p3", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e30", "from": "r3", "to": "d2", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e31", "from": "r4", "to": "p4", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e32", "from": "r5", "to": "p6", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e33", "from": "r5", "to": "p7", "label": "does", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e34", "from": "r6", "to": "d1", "label": "owns", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e35", "from": "r6", "to": "s1", "label": "manages", "arrow": "to", "line": "dotted", "properties": {}}, {"id": "e36", "from": "i1", "to": "p0", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e37", "from": "i2", "to": "w1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e38", "from": "k1", "to": "w1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e39", "from": "k2", "to": "p6", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e40", "from": "a1", "to": "k1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e41", "from": "a2", "to": "i1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e42", "from": "a3", "to": "i2", "label": "", "arrow": "none", "line": "dotted", "properties": {}}, {"id": "e43", "from": "k2", "to": "i1", "label": "", "arrow": "none", "line": "dotted", "properties": {}}]});
 
 let D;
 try { D = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
-if (!D || !D.nodes || !D.edges) D = sample();
+const WELCOME_KEY = 'kg-welcome-v1';
+let firstVisit = false;
+if (!D || !D.nodes || !D.edges) {
+  D = { nodes: [], edges: [] };
+  try { firstVisit = !localStorage.getItem(WELCOME_KEY); } catch (e) { firstVisit = true; }
+}
+const markSeen = () => { firstVisit = false; try { localStorage.setItem(WELCOME_KEY, '1'); } catch (e) {} };
 
 const saveLocal = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) {} };
 
@@ -916,6 +938,8 @@ function syncUndo() {
   if (r) { r.disabled = !rt; r.title = rt ? 'Redo: ' + rt.label : 'Nothing to redo'; }
 }
 const save = label => {
+  if (D.example && JSON.stringify(D) !== lastState) delete D.example;
+  if (D.nodes.length && firstVisit) markSeen();
   const cur = JSON.stringify(D);
   if (cur !== lastState) {
     let lab = typeof label === 'string' ? label : '';
@@ -929,7 +953,7 @@ const save = label => {
     lastPush = now; lastLab = lab; lastState = cur;
     syncUndo();
   }
-  saveLocal(); writeFile();
+  saveLocal(); writeFile(); exBar();
 };
 let toastT = null;
 function toast(m) {
@@ -2526,6 +2550,39 @@ const sel = id => {
   }
 };
 
+// example graph: loaded on request, flagged until the first real edit
+function loadExample() {
+  D = sample(); D.example = true;
+  undoStack.length = 0; redoStack.length = 0; lastState = JSON.stringify(D); lastLab = ''; syncUndo();
+  resetViewState(); markSeen(); saveLocal(); writeFile(); draw(); home();
+}
+async function startOwn() {
+  if (fileHandle && !(await uiConfirm('Start an empty graph? This also empties the linked file.'))) return;
+  D = { nodes: [], edges: [] };
+  undoStack.length = 0; redoStack.length = 0; lastState = JSON.stringify(D); lastLab = ''; syncUndo();
+  resetViewState(); markSeen(); saveLocal(); writeFile(); draw(); home();
+}
+function welcomeBox() {
+  let w = $('wbox');
+  if (!w) {
+    w = document.createElement('div'); w.id = 'wbox'; w.hidden = true;
+    w.innerHTML = '<div class="welcome"><h3>Welcome</h3><p>Try the example graph to see how it works, or start with an empty one.</p><div class="row"><button class="p" data-w="ex">Explore the example</button><button data-w="blank">Start blank</button></div></div>';
+    w.addEventListener('click', e => { const b = e.target.closest('[data-w]'); if (!b) return; if (b.dataset.w === 'ex') loadExample(); else { markSeen(); home(); } });
+    $('cy').appendChild(w);
+  }
+  w.hidden = !(firstVisit && !D.nodes.length);
+}
+function exBar() {
+  welcomeBox();
+  let b = $('exbar');
+  if (!b) {
+    b = document.createElement('div'); b.id = 'exbar'; b.hidden = true;
+    b.innerHTML = 'This is example data \u00b7 <a href="#" data-ex="own">Start your own</a>';
+    b.addEventListener('click', e => { if (e.target.closest('[data-ex]')) { e.preventDefault(); startOwn(); } });
+    $('cy').appendChild(b);
+  }
+  b.hidden = !D.example;
+}
 function homeStats() {
   const ids = new Set(D.nodes.map(n => n.id));
   const nl = D.edges.filter(e => ids.has(e.from) && ids.has(e.to)).length;
@@ -2536,10 +2593,11 @@ function homeStats() {
     '<p class="mu ovl">Create a knowledge graph to show how everything fits together and break down the silos between your teams.</p>' +
     '<p class="mu ovl">Understand how all of your data flows connect and processes interact.</p>' +
     '<p class="mu">Tap a node or link to see it. Everything saves in this browser as you go; the <b>?</b> button explains how.</p>';
-  if (!D.nodes.length) h += '<p>The graph is empty. Press <b>+ Node</b> to add the first one.</p>';
+  if (!D.nodes.length && !firstVisit) h += '<p>The graph is empty. Press <b>+ Node</b> to add the first one.</p>';
   return h + '</div>';
 }
 function home() {
+  exBar();
   setBig(false);
   PW.classList.add('idle');
   cy.elements().removeClass('show faded conn');
@@ -2829,7 +2887,7 @@ P.addEventListener('click', async ev => {
   }
 
   else if (a === 'rs') {
-    if (await uiConfirm(fileHandle ? 'Replace everything with the example graph? This also overwrites the linked file.' : 'Replace everything with the example graph?')) { D = sample(); save(); draw(); home(); }
+    if (await uiConfirm(fileHandle ? 'Replace everything with the example graph? This also overwrites the linked file.' : 'Replace everything with the example graph?')) loadExample();
   }
 });
 
@@ -2857,6 +2915,11 @@ $('fvar').addEventListener('click', e => {
 fvarSync();
 $('bd').onclick = () => dataView();
 $('bcc').onclick = () => catView();
+$('bex').onclick = async () => {
+  closeDrawer();
+  if (!D.example && D.nodes.length && !(await uiConfirm('Load the example graph? It replaces the graph you have now' + (fileHandle ? ' and the linked file' : '') + '. Save a copy first if you want to keep it.'))) return;
+  loadExample();
+};
 
 let tvTab = 'n';
 let tvDirty = false;
@@ -3418,7 +3481,9 @@ function setSelectMode(on) {
 // two-finger scroll pans, pinch (or Ctrl + scroll) zooms, hold Space and drag to pan.
 // In normal mode dragging empty space pans too; in Select mode dragging draws a box.
 let spaceHeld = false;
-const finePointer = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
+const finePointer = () => !matchMedia('(pointer: coarse)').matches;
+// the graph library would also zoom on every scroll, so on a computer all zooming is done here instead
+if (finePointer()) cy.userZoomingEnabled(false);
 const selPanMouse = () => selectMode && finePointer();
 const zoomAt = (level, cx, cy0) => { const r = $('cy').getBoundingClientRect(); cy.zoom({ level: Math.max(cy.minZoom(), Math.min(cy.maxZoom(), level)), renderedPosition: { x: cx - r.left, y: cy0 - r.top } }); };
 $('cy').addEventListener('wheel', e => {
@@ -3828,18 +3893,18 @@ async function openProject(name, force) {
 }
 
 // a folder with no projects gets a first one straight away, made from the graph on screen
-// (or the example graph if the screen is empty), so there is something to autosave into
+// (empty if the screen is empty or only shows the example), so there is something to autosave into
 async function firstProject() {
   try {
     try { await writing; } catch (e) {}
     let fname = 'Project 1.json', i = 1;
     while (projects.some(p => p.name.toLowerCase() === fname.toLowerCase())) fname = 'Project ' + (++i) + '.json';
-    const data = D.nodes.length ? D : sample();
+    const data = (D.nodes.length && !D.example) ? D : { nodes: [], edges: [] };
     const h = await dirHandle.getFileHandle(fname, { create: true });
     const w = await h.createWritable(); await w.write(JSON.stringify(data, null, 1)); await w.close();
     await listProjects();
     await openProject(fname, true);
-    toast('Made ' + baseName(fname) + ' from the graph on screen. It now autosaves.');
+    toast('Made ' + baseName(fname) + (data.nodes.length ? ' from the graph on screen' : ' (empty)') + '. It now autosaves.');
   } catch (e) { projMsg = 'Could not make a first project: ' + (e && e.message ? e.message : e); }
 }
 async function connectFolder() {
